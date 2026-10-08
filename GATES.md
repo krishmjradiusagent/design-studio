@@ -14,5 +14,10 @@ Scope: Publish the standalone MEL Copilot HTML as a new ChatGPT Site without mod
   EXPECT: hosting config verified
   EVIDENCE: exit=0; shell=/bin/sh; cwd=/Users/radius/Desktop/Architect/Radius/Design studio; path=6166d1a0b07c/41 entries; output=hosting config verified
 
-- [x] G3: production deployment reports succeeded
-  EVIDENCE: Sites deployment appgdep_6ac73bc3f4688191ba42c32e10b51812 returned status=succeeded for version appgprj_6ac73b2b5b2c8191b37d6319e1df677c~appgver_a8f5c7765fac81919107aae33f43d6c6 at https://mel-copilot-design-studio.radiusagent-2682.chatgpt.site
+- [x] G3: required static dependency folders are packaged with the Site
+  CHECK: test -f dist/mel/50-flyer-studio.js && test -f dist/mel/55-ms-sidebar.css && test -f dist/assets/mel-icon.svg && test -f dist/assets/tpl/package-collage.jpg && test -f dist/website-builder.js && echo site assets verified
+  EXPECT: site assets verified
+  EVIDENCE: exit=0; shell=/bin/sh; cwd=/Users/radius/Desktop/Architect/Radius/Design studio; path=6166d1a0b07c/41 entries; output=site assets verified
+
+- [ ] G4: production deployment reports succeeded
+  EVIDENCE: pending

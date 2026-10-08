@@ -1,0 +1,14 @@
+  .msfield{display:flex;gap:8px;margin-top:10px}
+  .msfield input{flex:1;min-width:0;height:36px;padding:0 12px;font:400 13.5px/1 var(--font);color:var(--neutral-900);background:var(--white);border:1px solid var(--neutral-200);border-radius:8px;box-shadow:var(--shadow-xs)}
+  .msfield input::placeholder{color:var(--neutral-400)}
+  .msfield input:focus{outline:2px solid var(--neutral-400);outline-offset:1px;border-color:var(--neutral-400)}
+  .msfield button{height:36px;padding:0 14px;font:500 13px/1 var(--font);color:#fff;background:var(--primary);border:0;border-radius:8px;cursor:pointer;transition:transform 160ms cubic-bezier(.23,1,.32,1),background 160ms ease}
+  .msfield button:hover{background:#4a4fe0}
+  .msfield button:active{transform:scale(.97)}
+  .msfield button:focus-visible{outline:2px solid var(--neutral-400);outline-offset:2px}
+  .mschips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .mschips button{height:32px;padding:0 13px;font:500 13px/1 var(--font);color:var(--neutral-900);background:var(--white);border:1px solid var(--neutral-200);border-radius:10px;cursor:pointer;transition:transform 160ms cubic-bezier(.23,1,.32,1),background 160ms ease,border-color 160ms ease}
+  .mschips button:hover{background:var(--neutral-100);border-color:var(--neutral-300)}
+  .mschips button:active{transform:scale(.97)}
+  .mschips button:focus-visible{outline:2px solid var(--neutral-400);outline-offset:2px}
+

@@ -1,0 +1,37 @@
+/* ---------- mel/44 — carousel templates on the templates page.
+   Carousel is its own template CATEGORY here (label reads "Carousel", same
+   treatment as Bold / Editorial / Minimal).
+
+   THE RULE THAT DRIVES THIS FILE: a slide switcher is only useful against a
+   SHARP image. The Edit/View hover treatment blurs and darkens the art, so the
+   two cannot be up at the same time — switching slides behind the blur means
+   changing to a picture you cannot see.
+
+   So there is ONE switcher pill on the art (arrows + dots, bottom centre), and
+   hovering it SUPPRESSES the hover overlay: the blur lifts, Edit/View step
+   aside, and the slide you land on is fully visible. Move back to the middle of
+   the card and Edit/View come straight back.
+
+   Card geometry is NOT changed: the pill is an absolute overlay inside the
+   existing photo box. */
+/* Anatomy follows the Radius UI carousel control (.rds-carousel__btn): round
+   --radius-full buttons, 16px glyph box, disabled at .4 opacity — recoloured for
+   an over-image chip, on the 4px grid, with a tabular counter that never reflows. */
+.msafcard-carui{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:6;
+  display:inline-flex;align-items:center;gap:var(--space-1,4px);height:28px;
+  padding:0 var(--space-1,4px);border-radius:var(--radius-full,9999px);
+  background:rgba(10,10,10,.46);backdrop-filter:blur(2px);
+  pointer-events:auto;transition:background-color .14s ease}
+.msafcard-carui:hover{background:rgba(10,10,10,.62)}
+.msafcard-carui .st{flex:none;display:grid;place-items:center;width:20px;height:20px;
+  border-radius:var(--radius-full,9999px);color:rgba(255,255,255,.92);cursor:pointer}
+.msafcard-carui .st i{display:block;width:14px;height:14px;font-size:14px;line-height:14px;text-align:center}
+.msafcard-carui .st:hover{background:rgba(255,255,255,.18)}
+.msafcard-carui .st[data-off="true"]{opacity:.4;pointer-events:none}
+.msafcard-carui .ct{flex:none;display:flex;align-items:center;justify-content:center;height:20px;min-width:30px;
+  font-family:var(--font,var(--font-sans),sans-serif);
+  font-size:12px;font-weight:600;line-height:1;color:#fff;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* browsing slides beats the hover treatment — art goes sharp, Edit/View step aside */
+.msafcard--tpl:has(.msafcard-carui:hover) .msafcard-tplhover{opacity:0;pointer-events:none}

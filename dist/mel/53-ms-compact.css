@@ -1,0 +1,28 @@
+/* 53 — Marketing Studio editors: no separate top bar row.
+   The panel toggle + back + crumb sit in the head of the left Mel panel, Close sits in the
+   top-right corner of the canvas card, and both cards run the full height of the editor.
+   Applies to the package/post editor (.pkedit) and Flyer Studio (.fl-app). Loads last. */
+
+/* ---------- package / post editor ---------- */
+.pkedit .main{padding-top:16px}
+.pkedit .top{top:17px;left:17px;right:17px;height:56px;padding:0 10px;align-items:center}
+.pkedit .top .tl{max-width:410px;min-width:0}
+.pkedit .pkelockup{border:0;box-shadow:none;background:none;padding:0 6px 0 0;height:40px;min-width:0}
+.pkedit .side{position:relative;padding-top:56px}
+.pkedit .side::after{content:"";position:absolute;top:56px;left:0;right:0;height:1px;background:var(--neutral-100);pointer-events:none}
+.pkedit.side-collapsed .top .pkelockup{display:none}
+.pkedit.side-collapsed .side::after{display:none}
+.pkedit .top .ta{margin-right:2px}
+.pkedit.open .pkswitch{top:22px}
+.pkedit #pke-psize{top:30px;right:64px}
+
+/* ---------- Flyer Studio ---------- */
+.fl-app.fl-editing{padding-top:16px}
+.fl-app.fl-editing .fl-top{position:absolute;top:17px;left:17px;right:17px;height:56px;padding:0 8px;z-index:40;pointer-events:none;gap:4px}
+.fl-app.fl-editing .fl-top > *{pointer-events:auto}
+.fl-app.fl-editing .fl-top .fl-sp{pointer-events:none}
+.fl-app.fl-editing .fl-crumb{border:0;background:none;box-shadow:none;height:40px;padding:0 6px 0 0;max-width:360px}
+.fl-app.fl-editing .fl-pks .side{position:relative;padding-top:56px}
+.fl-app.fl-editing .fl-pks .side::after{content:"";position:absolute;top:56px;left:0;right:0;height:1px;background:var(--neutral-100);pointer-events:none}
+.fl-app.fl-editing .fl-tico{width:32px;height:32px;border-radius:8px;margin-right:2px}
+.fl-app.fl-editing.fl-sideoff .fl-crumb{background:#fff;border:1px solid var(--neutral-200);padding:0 12px 0 4px}

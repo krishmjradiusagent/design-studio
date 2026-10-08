@@ -1,0 +1,48 @@
+/* Marketing Studio as its own sidebar destination (palette icon under Mel) — Studio + Library live inside it. */
+.sidebar .nav.on{background:#EEEFFE;color:#5A5FF2}
+.sidebar .nav.on svg,.sidebar .nav.on .ph{color:#5A5FF2;stroke:#5A5FF2}
+#ms-navstudio,#ms-navlib{display:none!important}
+.melpage.studio .melhist,.melpage.library .melhist{display:none}
+.mstabs{display:none;position:absolute;top:14px;left:20px;z-index:6}
+.melpage.studio:not(.paneled):not(.canvason):not(.packeton) .mstabs,.melpage.library .mstabs{display:block}
+body.msfull .mstabs,.melpage:has(.msnfs.on:not([data-nf="workflows"])) .mstabs{display:none}
+.mstabs .rds-tab{color:#5A5FF2;cursor:pointer;border:0;background:none;display:inline-flex;align-items:center;gap:6px}
+.mstabs .rds-tab[aria-selected="true"]{background:var(--background);color:#5A5FF2}
+/* Design studio only: no Mel Copilot chat surface. */
+#mel-hist,#mel-zero,#pb-chat,#mel-taskstoggle{display:none!important}
+.sidebar .mel{cursor:default}
+.sidebar .mel .melfly,.sidebar .mel .melchev{display:none!important}
+.msnftoasts,#msnf-return,#msnf-toast{display:none!important}
+/* First paint is already the Design studio home: no chat or v1 hub flash while scripts boot. */
+.melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio>.mshead,.melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio>.msrail,.melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio>.mshint,.melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio>.msmark,.melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio>.melring{display:none!important}
+.melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio .msnf{display:flex}
+.melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .phead{display:none!important}
+/* Design studio pill keeps its look and gains a Library segment. */
+#ms-tabs{display:none!important}
+.msaf-eb{padding:4px;gap:2px}
+.msaf-seg{display:inline-flex;align-items:center;gap:var(--space-2);padding:6px 14px 6px 10px;border:0;border-radius:9999px;background:none;cursor:pointer;font:inherit;transition:background .15s}
+.msaf-seg .msaf-ebtx{opacity:.55;transition:opacity .15s}
+.msaf-seg .msaf-ebring{display:none}
+.msaf-seg[aria-selected="true"]{background:rgba(255,255,255,.9);box-shadow:0 1px 3px rgba(90,95,242,.14)}
+.msaf-eb .msaf-ebring,.msaf-seg[aria-selected="true"] .msaf-ebring{display:none!important}
+.msaf-seg[aria-selected="true"] .msaf-ebtx,.msaf-seg:hover .msaf-ebtx{opacity:1}
+.msaf-seg,.msaf-seg:not([aria-selected="true"]){padding:6px 14px}
+.msaf-seg:active{transform:scale(.98)}
+/* Library label: solid text. Design studio label keeps the Mel gradient. Selected = white chip, border, shadow. */
+.msaf-eb .msaf-seg[data-mstab="library"] .msaf-ebtx{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;-webkit-text-fill-color:currentColor!important;color:#737373!important;opacity:1!important;font-weight:600}
+.msaf-eb .msaf-seg[data-mstab="library"]:hover .msaf-ebtx{color:#0A0A0A!important}
+.msaf-eb .msaf-seg[data-mstab="library"][aria-selected="true"] .msaf-ebtx{color:#0A0A0A!important;font-weight:600}
+.msaf-eb .msaf-seg[data-mstab="studio"] .msaf-ebtx{opacity:1!important}
+.msaf-eb .msaf-seg[aria-selected="true"]{background:#fff;box-shadow:0 0 0 1px #C9CAF8,0 2px 8px rgba(90,95,242,.22)}
+/* Library header: same centred pill + title treatment as the Design studio home. */
+.mslib .lbcrumb{display:none}
+.mslib .lbeb{display:flex;width:fit-content;margin:0 auto 12px}
+.mslib .lbh{font-size:34px;line-height:1.12;text-align:center;text-wrap:balance}
+.mslib .lbs{margin:0 auto 20px;text-align:center}
+
+/* Pill sits at the same spot in Studio and Library: same top inset, same label weight in every state. */
+.mslib{padding-top:18px}
+.msaf-eb .msaf-seg .msaf-ebtx{font-weight:600!important}
+.melpage.library .phead{display:none!important}
+/* Studio home is top-anchored (not vertically centred) so the pill lands where Library puts it. */
+body .msnfs[data-nf="workflows"].on{justify-content:flex-start!important;min-height:0!important;margin-top:0!important}

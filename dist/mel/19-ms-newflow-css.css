@@ -1,0 +1,1329 @@
+/* ============ Marketing Studio — new flow (Tweaks → Marketing Studio → Flow) ============
+   Additive only: old flow keeps its own hub, panel and editor. Nothing here runs
+   unless <body> carries .msflow-new. */
+.msnf{display:none;flex-direction:column;width:100%;max-width:940px;margin:0 auto;padding:18px 32px 28px;text-align:left}
+body.msflow-new .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio > .mshead,
+body.msflow-new .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio > .msrail,
+body.msflow-new .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio > .mshint,
+body.msflow-new .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio > .msmark{display:none !important}
+/* The old dark gradient hub (#ms-hub, inside .msrail) is retired in the new flow. The rule
+   above only hides it in the bare studio state, so it resurfaced the moment the page gained
+   .paneled / .canvason / .packeton / .library — this hides it in every state. Two call sites
+   in 18-ms-packet-js.js still .click() those cards programmatically, which works hidden. */
+body.msflow-new .melpage.studio .msstudio > .msrail{display:none !important}
+body.msflow-new .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio{justify-content:flex-start;text-align:left;gap:0;padding:0}
+/* The page header is EMPTY on the studio home (measured: .phead 56px tall, innerText ""), and it
+   is the entire reason the Marketing Studio pill sat 77px down here vs 20px on the listing screen.
+   The listing screen already drops it via `body.msfull .phead{display:none}`; same treatment here,
+   behind the same guard chain so only the bare studio home is affected. */
+body.msflow-new .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .phead{display:none !important}
+body.msflow-new .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio .msnf{display:flex}
+body.msflow-new .melpage.studio .melfoot{display:none !important}
+
+/* ============ Marketing Studio — combined flow ============
+   Sit on the OLD hub by default (cards + search). Clicking a hub card or a propbar
+   search hit adds .mscn-on to <body>, which reveals the new-flow overlay on top of
+   the studio panel. Post completion (IG modal close) drops .mscn-on and returns to
+   the old hub — the tweak setting stays as 'combined' in localStorage. */
+body.msflow-combined .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio .msnf{display:none}
+body.msflow-combined.mscn-on .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio > .mshead,
+body.msflow-combined.mscn-on .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio > .msrail,
+body.msflow-combined.mscn-on .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio > .mshint,
+body.msflow-combined.mscn-on .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio > .msmark{display:none !important}
+body.msflow-combined.mscn-on .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio{justify-content:flex-start;text-align:left;gap:0;padding:0}
+body.msflow-combined.mscn-on .melpage.studio:not(.paneled):not(.canvason):not(.packeton):not(.library) .msstudio .msnf{display:flex}
+body.msflow-combined.mscn-on .melpage.studio .melfoot{display:none !important}
+
+.msnfs{display:none;flex-direction:column;gap:18px}
+.msnfs.on{display:flex;animation:msnfin .22s cubic-bezier(.23,1,.32,1)}
+/* step 1 sits centred in the panel — one field, nothing else competing */
+.msnf{flex:1;min-height:0}
+.msnfs[data-nf="address"].on{flex:1;justify-content:center;align-items:center;text-align:center}
+.msnfs[data-nf="address"] .mshead{align-items:center;text-align:center}
+.msnfs[data-nf="address"] .mshead p{margin:0 auto}
+.msnfs[data-nf="address"] .msnfsearch,
+.msnfs[data-nf="address"] .msnfrows{width:100%;max-width:620px}
+.msnfs[data-nf="address"] .msnflabel{width:100%;max-width:620px;text-align:left}
+/* steps 2 and 2b sit in the same centred column */
+.msnfs[data-nf="intent"].on,.msnfs[data-nf="scope"].on{align-items:center}
+.msnfs[data-nf="intent"] .mshead,.msnfs[data-nf="scope"] .mshead{align-items:center;text-align:center}
+.msnfs[data-nf="intent"] .mshead p,.msnfs[data-nf="scope"] .mshead p{margin:0 auto}
+.msnfs[data-nf="intent"] .msnfchips{justify-content:center}
+.msnfs[data-nf="intent"] .msnfgrid,.msnfs[data-nf="scope"] .msnfscope{width:100%;max-width:860px}
+.msnfs[data-nf="scope"] .msnfcount{text-align:center}
+.msnfs[data-nf="scope"] .msnfgo{align-self:center}
+/* back reads as a Mel suggestion chip, chip-sized, sitting under the cards */
+.msnflink{order:20;align-self:center;display:inline-flex;align-items:center;height:30px;padding:0 13px;
+  border:1px solid transparent;border-radius:999px;cursor:pointer;font:500 12.5px var(--font);
+  background:linear-gradient(var(--white),var(--white)) padding-box,linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468) border-box;
+  transition:box-shadow .16s ease,transform .16s cubic-bezier(.23,1,.32,1)}
+.msnflink span{background:linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#5A5FF2}
+.msnflink:hover{box-shadow:0 0 0 3px rgba(90,95,242,.1)}
+.msnflink:active{transform:scale(.97)}
+
+/* ===== step 3 — template wall ===== */
+.msnfs[data-nf="templates"].on,.msnfs[data-nf="gen"].on{align-items:center}
+.msnfs[data-nf="templates"] .mshead,.msnfs[data-nf="gen"] .mshead{align-items:center;text-align:center;order:1}
+.msnfs[data-nf="templates"] .mshead p,.msnfs[data-nf="gen"] .mshead p{margin:0 auto}
+.msnftplbar{order:2;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:860px;flex-wrap:wrap}
+.msnfchips.filters{gap:6px}
+.msnfchip.fc{border:1px solid transparent;cursor:pointer;font:500 12px var(--font);color:var(--neutral-600);transition:background .14s ease,color .14s ease}
+.msnfchip.fc:hover{color:var(--neutral-900)}
+.msnfchip.fc.on{background:var(--neutral-900);color:#fff}
+.msnfgo.sm{height:32px;padding:0 13px;font-size:12.5px}
+.msnftplgrid{order:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%;max-width:860px}
+@media (max-width:1080px){.msnftplgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.msnftpl{display:flex;flex-direction:column;gap:9px;padding:10px;background:var(--white);border:1px solid var(--neutral-200);border-radius:var(--r-card);cursor:pointer;text-align:left;
+  transition:border-color .16s ease,box-shadow .16s ease,transform .16s cubic-bezier(.23,1,.32,1),opacity .2s ease}
+.msnftpl:hover{border-color:var(--neutral-300);box-shadow:var(--shadow-sm)}
+.msnftpl:active{transform:scale(.985)}
+.msnftpl.sel{border-color:var(--primary);box-shadow:0 0 0 3px rgba(90,95,242,.16)}
+.msafcard--tpl.sel{border-color:var(--primary);box-shadow:0 0 0 3px rgba(90,95,242,.18)}
+/* multi-select is always on in the template grid — a Radius UI checkbox in the title row
+   carries the state. It is NOT on the photo: the photo is the template preview. */
+.msafcard--tpl{position:relative}
+.msafcard--tpl .msafcard-titlerow{display:flex;align-items:flex-start;gap:12px}
+.msafcard--tpl .msafcard-titlecol{flex:1;min-width:0}
+.msafcard-check{flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin:-2px 0 0;border-radius:8px;cursor:pointer}
+.msafcard-check:hover{background:var(--neutral-100)}
+/* Unselected box matches the reference: Radius UI hairline (--neutral-300 #D4D4D4) on white,
+   corners 5px = radius-sm 6px scaled from a 24px box to this 18px one (6 × 18/24 ≈ 4.5).
+   Checked state is untouched — indigo fill + white tick from the design system. */
+.msafcard-check .rds-checkbox{width:18px;height:18px;border-color:var(--neutral-300);border-radius:5px;background:var(--white)}
+.msafcard-check:hover .rds-checkbox{border-color:var(--neutral-400)}
+/* the box is React-owned, so :checked never engages — paint from the card's own state.
+   Geometry and tokens stay the design system's; only the state hook differs. */
+.msafcard--tpl.sel .msafcard-check .rds-checkbox{background:var(--primary);border-color:var(--primary)}
+.msafcard--tpl.sel .msafcard-check .rds-checkbox::after{content:"";width:10px;height:10px;background:var(--primary-foreground);clip-path:polygon(14% 44%,0 65%,40% 100%,100% 16%,84% 0,39% 60%)}
+.msnftpl.dim{opacity:.4}
+.msnftpl.hide{display:none}
+.msnftpl .meta{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:0 2px 2px}
+.msnftpl .meta b{font-size:13px;font-weight:600;color:var(--neutral-900)}
+.msnftpl .meta i{font-style:normal;font-size:11px;color:var(--neutral-500)}
+/* previews — one structure, five looks */
+.prev{position:relative;display:block;aspect-ratio:1/1;overflow:hidden;border-radius:10px;background:var(--neutral-100)}
+.prev .ph{position:absolute;inset:0;background:var(--neutral-200) center/cover no-repeat}
+.prev .band{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:1px;padding:28px 12px 11px;color:#fff;
+  background:linear-gradient(to top,rgba(10,10,10,.8),rgba(10,10,10,0))}
+.prev .band b{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.prev .band i{font-style:normal;font-size:11px;opacity:.85}
+.prev .panel{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:2px;padding:11px 12px 12px;background:var(--white)}
+.prev .panel b{font-size:15px;font-weight:700;color:var(--neutral-900)}
+.prev .panel i{font-style:normal;font-size:11px;color:var(--neutral-600)}
+.prev .panel em{font-style:normal;font-size:10.5px;color:var(--neutral-500)}
+.prev .kicker{position:absolute;top:11px;left:12px;z-index:2;font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--neutral-500)}
+.prev .serif{position:absolute;top:25px;left:12px;right:12px;z-index:2;font:400 20px/1.1 'Newsreader',Georgia,serif;color:var(--neutral-900)}
+.prev .foot{position:absolute;left:12px;right:12px;bottom:11px;z-index:2;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.prev .foot b{font-size:13px;font-weight:600;color:var(--neutral-900)}
+.prev .foot i{font-style:normal;font-size:10.5px;color:var(--neutral-500)}
+.prev .grid4{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px}
+.prev .grid4 .ph{position:relative;inset:auto}
+.prev .tag{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;padding:5px 11px;border-radius:999px;background:#fff;font-size:12px;font-weight:700;color:var(--neutral-900);box-shadow:0 2px 10px rgba(10,10,10,.18)}
+.prev .rule{position:absolute;left:12px;right:12px;bottom:38px;height:1px;background:var(--neutral-200)}
+.prev .line{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.prev .line b{font-size:11.5px;font-weight:600;color:var(--neutral-900)}
+.prev .line i{font-style:normal;font-size:11.5px;color:var(--neutral-600);font-variant-numeric:tabular-nums}
+.tpl-wave .panel,.tpl-wave .kicker,.tpl-wave .serif,.tpl-wave .foot,.tpl-wave .tag,.tpl-wave .rule,.tpl-wave .line,.tpl-wave .grid4{display:none}
+.tpl-feature{background:var(--white)}
+.tpl-feature .band,.tpl-feature .kicker,.tpl-feature .serif,.tpl-feature .foot,.tpl-feature .tag,.tpl-feature .rule,.tpl-feature .line,.tpl-feature .grid4{display:none}
+.tpl-feature .ph{inset:0 0 38% 0}
+.tpl-editorial{background:var(--white)}
+.tpl-editorial .band,.tpl-editorial .panel,.tpl-editorial .tag,.tpl-editorial .rule,.tpl-editorial .line,.tpl-editorial .grid4{display:none}
+.tpl-editorial .ph{inset:46% 12px 20% 12px;border-radius:4px}
+/* Kicker + serif clear the badge row (status left, Mel-picked + star right: top 10px, 32px tall),
+   so "Noe Valley" no longer runs under the pills. */
+.tpl-editorial .kicker{top:48px}
+.tpl-editorial .serif{top:62px;font-size:18px}
+.tpl-collage .band,.tpl-collage .panel,.tpl-collage .kicker,.tpl-collage .serif,.tpl-collage .foot,.tpl-collage .rule,.tpl-collage .line{display:none}
+.tpl-collage > .ph{display:none}
+.tpl-minimal{background:var(--white)}
+.tpl-minimal .band,.tpl-minimal .panel,.tpl-minimal .kicker,.tpl-minimal .serif,.tpl-minimal .foot,.tpl-minimal .tag,.tpl-minimal .grid4{display:none}
+.tpl-minimal .ph{inset:12px 12px 46px 12px;border-radius:3px}
+.msnfwhy{order:4;display:none;align-items:flex-start;gap:8px;width:100%;max-width:860px;padding:11px 13px;border-radius:12px;background:#F4F4FE;border:1px solid #E1E2FB;
+  font-size:12.5px;line-height:18px;color:#3F3FBF;text-align:left}
+.msnfwhy.on{display:flex;animation:msnfin .24s cubic-bezier(.23,1,.32,1)}
+.msnfwhy svg{width:14px;height:14px;flex:none;margin-top:2px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.msnfs[data-nf="templates"] .msnflink,.msnfs[data-nf="gen"] .msnflink{order:20}
+
+/* ===== step 4 — generate ===== */
+.msnfsteps{order:2;display:flex;gap:6px}
+.msnfsteps .s{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:999px;background:var(--neutral-100);color:var(--neutral-500);font-size:12px;font-weight:500;transition:background .2s ease,color .2s ease}
+.msnfsteps .s::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--neutral-300)}
+.msnfsteps .s.doing{background:#EEEFFE;color:var(--primary)}
+.msnfsteps .s.doing::before{background:var(--primary);animation:msnfpulse 1.1s ease-in-out infinite}
+@keyframes msnfpulse{0%,100%{opacity:1}50%{opacity:.3}}
+.msnfsteps .s.done{background:#F1F8EC;color:#4E7A33}
+.msnfsteps .s.done::before{background:#6DA544}
+.msnfstage{order:3;position:relative;width:320px;height:320px;display:none}
+.msnfs[data-nf="gen"].single .msnfstage{display:block}
+.msnfstage .skel{position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:var(--r-card);background:var(--white);border:1px solid var(--neutral-200);transition:opacity .2s ease}
+.msnfstage .skel .b{display:block;border-radius:8px;background:linear-gradient(90deg,var(--neutral-100),var(--neutral-200),var(--neutral-100));background-size:200% 100%;animation:msnfshim 1.4s linear infinite;opacity:0;transition:opacity .2s ease}
+.msnfstage .skel .b1{height:60%}
+.msnfstage .skel .b2{height:14px;width:55%}
+.msnfstage .skel .b3{height:14px;width:80%}
+@keyframes msnfshim{to{background-position:-200% 0}}
+.msnfstage.s1 .skel .b1,.msnfstage.s2 .skel .b1,.msnfstage.s2 .skel .b2,.msnfstage.s3 .skel .b1,.msnfstage.s3 .skel .b2,.msnfstage.s3 .skel .b3{opacity:1}
+.msnfstage .art{position:absolute;inset:0;display:block;overflow:hidden;border-radius:var(--r-card);border:1px solid var(--neutral-200);background:var(--neutral-100);
+  opacity:0;transform:scale(.97);transition:opacity .26s cubic-bezier(.23,1,.32,1),transform .26s cubic-bezier(.23,1,.32,1);box-shadow:var(--shadow-sm)}
+.msnfstage.done .art{opacity:1;transform:none}
+.msnfstage.done .skel{opacity:0}
+.msnfstage .art .serif{font-size:27px;top:32px}
+.msnfstage .art .band b,.msnfstage .art .panel b{font-size:20px}
+.msnfwall{order:3;display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;max-width:860px}
+.msnfs[data-nf="gen"].pkg .msnfwall{display:grid}
+.msnfwall .cell{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--neutral-200);border-radius:12px;background:var(--white);transition:border-color .2s ease,background .2s ease}
+.msnfwall .cell.hide{display:none}
+.msnfwall .cell .ci{width:26px;height:26px;flex:none;display:grid;place-items:center;border-radius:7px;background:var(--neutral-100);color:var(--neutral-700)}
+.msnfwall .cell .ci svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.msnfwall .cell .nm{flex:1;min-width:0;font-size:13.5px;font-weight:500;color:var(--neutral-900)}
+.msnfwall .cell .st{flex:none;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--neutral-400)}
+.msnfwall .cell.making{border-color:#F6D3C9;background:#FEF8F6}
+.msnfwall .cell.making .st{color:#C2603F}
+.msnfwall .cell.ready{border-color:#DCEBD2;background:#FAFCF8}
+.msnfwall .cell.ready .st{color:#4E7A33}
+.msnfwall .cell.editing{border-color:#C9CBFA;background:#F7F7FF}
+.msnfwall .cell.editing .st{color:var(--primary)}
+.msnfprog{order:4;display:none;width:100%;max-width:860px;height:3px;border-radius:2px;background:var(--neutral-100);overflow:hidden}
+.msnfs[data-nf="gen"].pkg .msnfprog{display:block}
+.msnfprog .bar{display:block;height:100%;width:0;background:var(--primary);transition:width .45s cubic-bezier(.23,1,.32,1)}
+.msnfsum{order:5;font-size:12.5px;color:var(--neutral-500)}
+.msnfs[data-nf="gen"] .msnfgo{order:6;align-self:center}
+.msnfpills{order:7;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.msnfpills .msnflink{order:0;margin-top:0}
+.msnfs[data-nf="gen"] > .msnflink{display:none}
+.msnfs[data-nf="gen"] .msnflink{order:7;margin-top:-8px}
+/* static Mel ring as the button mark (own class — Ring tweak can't touch it) */
+.msnfring.st{position:relative;inset:auto;width:15px;height:15px;flex:none;opacity:1}
+@media (prefers-reduced-motion:reduce){.msnfstage .skel .b,.msnfsteps .s.doing::before{animation:none}}
+.msnfs[data-nf="intent"] .msback,.msnfs[data-nf="scope"] .msback{align-self:center;margin-right:auto}
+/* head first, then the quiet back link, then the content */
+.msnfs[data-nf="intent"] .mshead,.msnfs[data-nf="scope"] .mshead{order:1}
+.msnfs[data-nf="intent"] .msnfchips{order:10}
+.msnfs[data-nf="intent"] .msnfgrid{order:11}
+.msnfs[data-nf="scope"] .msnfcount{order:10}
+.msnfs[data-nf="scope"] .msnfscope{order:11}
+.msnfs[data-nf="scope"] .msnfgo{order:12}
+
+/* ===== step 0 — workflows menu (top-level Marketing Studio) ===== */
+.msnfs[data-nf="workflows"].on{align-items:center;justify-content:flex-start;padding-top:0;margin-top:-5px}
+.msnfs[data-nf="workflows"] .mshead{align-items:center;text-align:center;order:1}
+.msnfs[data-nf="workflows"] .mshead p{margin:0 auto;max-width:56ch}
+.msnfs[data-nf="workflows"] .msnfgrid{order:11;width:100%;max-width:860px;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.msnfs[data-nf="workflows"] .msnfcard{padding-right:14px}
+.msnfs[data-nf="workflows"] .msnfsoontag{position:absolute;top:12px;right:12px;font:600 9.5px/1 var(--font);letter-spacing:.04em;color:var(--neutral-500);background:var(--neutral-100);border:1px solid var(--neutral-200);padding:4px 7px;border-radius:var(--r-badge)}
+.msnfs[data-nf="workflows"] .msnfcard.soon{cursor:not-allowed;opacity:.85}
+.msnfs[data-nf="workflows"] .msnfcard.soon:hover{border-color:var(--neutral-200);box-shadow:none;transform:none}
+.msnfs[data-nf="workflows"] .msnfcard.soon:active{transform:none}
+.msnfs[data-nf="workflows"] .msnfcard.soon .ci{background:var(--neutral-100);color:var(--neutral-400)}
+.msnfs[data-nf="workflows"] .msnfcard.soon b{color:var(--neutral-700)}
+
+/* Workflows redesign: hero package + preview strip, active website with page mock, demoted coming-soon row */
+.msnfs[data-nf="workflows"] .msnfgrid{grid-template-columns:1fr;gap:14px;max-width:920px}
+.msnfs[data-nf="workflows"] .msnfcard.wprev,
+.msnfs[data-nf="workflows"] .msnfcard.wsite{grid-column:1/-1;display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:20px;align-items:stretch;padding:18px 20px;text-align:left}
+.msnfs[data-nf="workflows"] .msnfcard.pkg{background:linear-gradient(135deg,#fbfbff 0%,#fdfaff 55%,#fffbf8 100%);border-color:#d6d7fb}
+.msnfs[data-nf="workflows"] .msnfcard.pkg:hover{border-color:#b4b6f4;box-shadow:0 4px 20px rgba(90,95,242,.14)}
+.msnfs[data-nf="workflows"] .msnfcard.wsite{background:var(--white);border-color:var(--neutral-200)}
+.wprev-l{display:flex;flex-direction:column;gap:6px;min-width:0;justify-content:center}
+.wprev-l .ci{width:34px;height:34px;margin-bottom:6px}
+.wprev-l b{font-size:16px;font-weight:600;color:var(--neutral-900);line-height:1.25}
+.wprev-l i{font-style:normal;font-size:12.5px;line-height:17px;color:var(--neutral-600)}
+.wprev-cnt{margin-top:6px;font:500 11px/1 var(--font);letter-spacing:.02em;color:var(--primary);text-transform:uppercase}
+.msnfcard.wsite .wprev-cnt{color:var(--neutral-500)}
+
+/* preview strip: 6 mini thumbnails */
+.wprev-r{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;min-width:0}
+.wsite-r{grid-template-columns:1fr}
+.wpt{position:relative;background:#f4f4f8;border:1px solid var(--neutral-200);border-radius:8px;overflow:hidden;min-width:0;aspect-ratio:3/4}
+.wpt-tag{position:absolute;bottom:4px;left:4px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.94);font:600 8.5px/1 var(--font);letter-spacing:.04em;color:var(--neutral-700);text-transform:uppercase}
+.msnfcard.wprev:hover .wpt{border-color:#c9cbf3}
+
+/* per-format shapes */
+.wpt-post{aspect-ratio:1/1}
+.wpt-post .wpt-photo{position:absolute;inset:0;background:linear-gradient(135deg,#B8C4D6 0%,#6B7A94 100%)}
+.wpt-post .wpt-price{position:absolute;left:6px;bottom:16px;padding:2px 6px;background:var(--primary);color:#fff;font:700 9px/1 var(--font);border-radius:3px}
+
+.wpt-story{aspect-ratio:9/16}
+.wpt-story .wpt-photo{position:absolute;inset:0;background:linear-gradient(160deg,#9AABC4 0%,#3F4A5E 100%)}
+.wpt-story .wpt-storycap{position:absolute;left:5px;right:5px;top:10px;color:#fff;font-family:var(--font)}
+.wpt-story .wpt-storycap b{display:block;font-size:9px;font-weight:700;letter-spacing:.04em}
+.wpt-story .wpt-storycap span{display:block;font-size:7.5px;opacity:.9;margin-top:2px}
+
+.wpt-reel{aspect-ratio:9/16}
+.wpt-reel .wpt-photo{position:absolute;inset:0;background:linear-gradient(180deg,#3a3530 0%,#1a1815 100%)}
+.wpt-reel .wpt-play{position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.85)}
+.wpt-reel .wpt-play svg{width:18px;height:18px}
+
+.wpt-email{background:#fff;aspect-ratio:4/5}
+.wpt-email .wpt-emailbar{position:absolute;top:0;left:0;right:0;height:12px;background:var(--primary)}
+.wpt-email .wpt-emailhero{position:absolute;top:16px;left:6px;right:6px;height:26px;background:linear-gradient(135deg,#B8C4D6,#6B7A94);border-radius:2px}
+.wpt-email .wpt-emaillines{position:absolute;left:6px;right:6px;top:46px;display:flex;flex-direction:column;gap:3px}
+.wpt-email .wpt-emaillines span{height:2px;background:#e5e5eb;border-radius:1px}
+.wpt-email .wpt-emaillines span:nth-child(2){width:75%}
+.wpt-email .wpt-emaillines span:nth-child(3){width:50%}
+
+.wpt-flyer{background:#fff;aspect-ratio:3/4}
+.wpt-flyer .wpt-flyerhero{position:absolute;top:4px;left:4px;right:4px;height:44%;background:linear-gradient(135deg,#B8C4D6,#6B7A94);border-radius:3px}
+.wpt-flyer .wpt-flyerprice{position:absolute;left:4px;right:4px;top:50%;text-align:center;font:800 11px/1 var(--font);color:var(--neutral-900);letter-spacing:-.01em}
+.wpt-flyer .wpt-flyerlines{position:absolute;left:6px;right:6px;bottom:16px;display:flex;flex-direction:column;gap:3px}
+.wpt-flyer .wpt-flyerlines span{height:2px;background:#e5e5eb;border-radius:1px}
+.wpt-flyer .wpt-flyerlines span:nth-child(2){width:65%}
+
+.wpt-page{background:#fff;aspect-ratio:4/3}
+.wpt-page .wpt-pagenav{position:absolute;top:0;left:0;right:0;height:8px;background:#f7f7fb;display:flex;align-items:center;gap:3px;padding:0 5px;border-bottom:1px solid #eee}
+.wpt-page .wpt-pagenav i{width:10px;height:2px;background:#d4d4dc;border-radius:1px}
+.wpt-page .wpt-pagenav i:first-child{background:var(--primary);width:14px}
+.wpt-page .wpt-pagehero{position:absolute;top:10px;left:4px;right:4px;height:34%;background:linear-gradient(135deg,#B8C4D6,#6B7A94);border-radius:2px}
+.wpt-page .wpt-pagegrid{position:absolute;left:4px;right:4px;bottom:4px;display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.wpt-page .wpt-pagegrid span{aspect-ratio:1/1;background:#eeeef4;border-radius:1px}
+
+/* larger page mock for the website card */
+.wpt-page--lg{aspect-ratio:16/8;max-height:140px}
+.wpt-page--lg .wpt-pagenav{height:12px;padding:0 8px}
+.wpt-page--lg .wpt-pagenav i{width:16px;height:3px}
+.wpt-page--lg .wpt-pagenav i:first-child{width:22px}
+.wpt-page--lg .wpt-pagehero{top:15px;left:6px;right:6px;height:42%;border-radius:3px}
+.wpt-page--lg .wpt-pagemeta{position:absolute;left:8px;right:8px;top:calc(15px + 42% + 4px);display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.wpt-page--lg .wpt-pagemeta b{font:700 9.5px/1 var(--font);color:var(--neutral-900)}
+.wpt-page--lg .wpt-pagemeta span{font:500 8px/1 var(--font);color:var(--neutral-500)}
+.wpt-page--lg .wpt-pagegrid{left:6px;right:6px;bottom:6px;gap:3px}
+
+/* demoted coming-soon row */
+.msnfsoonrow{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr 1fr;gap:12px;align-items:center;margin-top:2px;padding:10px 14px;background:var(--neutral-50,#fafafa);border:1px dashed var(--neutral-200);border-radius:10px}
+.msnfsoonhd{font:600 10.5px/1 var(--font);letter-spacing:.06em;color:var(--neutral-500);text-transform:uppercase;padding-right:6px;border-right:1px solid var(--neutral-200);margin-right:4px}
+.msnfsoonitem{display:flex;align-items:center;gap:10px;min-width:0}
+.msnfsoonitem .ci{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:6px;background:var(--neutral-100);color:var(--neutral-500)}
+.msnfsoonitem .ci svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.msnfsoontx{min-width:0;flex:1;display:flex;flex-direction:column;gap:1px;overflow:hidden}
+.msnfsoontx b{font:600 12.5px/1.2 var(--font);color:var(--neutral-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msnfsoontx i{font-style:normal;font:400 11px/1.3 var(--font);color:var(--neutral-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msnfnotify{flex:none;height:26px;padding:0 10px;border-radius:6px;border:1px solid var(--neutral-200);background:var(--white);color:var(--neutral-700);font:500 11.5px/1 var(--font);cursor:pointer;transition:all .12s ease}
+.msnfnotify:hover{border-color:var(--primary);color:var(--primary)}
+.msnfnotify.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+@media (max-width:900px){
+  .msnfs[data-nf="workflows"] .msnfcard.wprev,
+  .msnfs[data-nf="workflows"] .msnfcard.wsite{grid-template-columns:1fr}
+  .wprev-r{grid-template-columns:repeat(6,minmax(40px,1fr))}
+  .msnfsoonrow{grid-template-columns:1fr;gap:8px}
+  .msnfsoonhd{border-right:none;border-bottom:1px solid var(--neutral-200);padding-bottom:6px;margin-right:0}
+}
+
+@keyframes msnfin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.msnfs.on{animation:msnffade .18s ease}@keyframes msnffade{from{opacity:0}to{opacity:1}}}
+.msnf .mshead h2{font-size:26px;font-weight:600;letter-spacing:-.022em;color:var(--neutral-900);margin:0}
+.msnf .mshead p{font-size:14px;line-height:21px;color:var(--neutral-500);margin:0;max-width:58ch;text-wrap:pretty}
+.msnf .msback{align-self:flex-start}
+
+/* step 1 — address */
+.msnfsearch{position:relative;overflow:hidden;display:flex;align-items:center;gap:11px;height:56px;max-width:620px;padding:0 16px;
+  border:1.5px solid transparent;border-radius:14px;
+  background:linear-gradient(var(--white),var(--white)) padding-box,linear-gradient(92deg,#C9CBF9,#BFC1F7,#F6C6BB,#F7D6BF) border-box;
+  transition:background .25s ease,box-shadow .25s ease}
+.msnfsearch:hover{box-shadow:0 0 0 3px rgba(90,95,242,.07)}
+.msnfsearch.on,.msnfsearch.loading{
+  background:linear-gradient(var(--white),var(--white)) padding-box,linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468,#7B7FF5) border-box;
+  background-size:auto,220% 100%;
+  box-shadow:0 0 0 4px rgba(90,95,242,.10),0 10px 28px -14px rgba(90,95,242,.45);
+  animation:msnfglow 5s linear infinite}
+@keyframes msnfglow{from{background-position:0 0,0% 50%}to{background-position:0 0,200% 50%}}
+.msnfsearch.miss{background:linear-gradient(var(--white),var(--white)) padding-box,linear-gradient(92deg,#F0A9A9,#F0A9A9) border-box;box-shadow:0 0 0 3px rgba(220,38,38,.1);animation:none}
+.msnfsearch.miss + .msnflabel::after{content:' — nothing matched that address or MLS number';font-weight:500;letter-spacing:0;text-transform:none;color:#B91C1C}
+/* liquid fill: a Mel-gradient baseline that rises through the field on hover/focus */
+.msnfliquid{position:absolute;left:0;right:0;bottom:0;height:0;z-index:0;pointer-events:none;border-radius:13px;
+  background:linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468);
+  -webkit-mask:linear-gradient(to top,#000 34%,rgba(0,0,0,.5) 68%,transparent 100%);
+  mask:linear-gradient(to top,#000 34%,rgba(0,0,0,.5) 68%,transparent 100%);
+  opacity:0;transition:height .62s cubic-bezier(.32,.72,0,1),opacity .42s ease}
+.msnfsearch:hover .msnfliquid{height:165%;opacity:.18}
+.msnfsearch.on .msnfliquid,.msnfsearch.loading .msnfliquid{height:165%;opacity:.13}
+.msnfsearch .msnfmel,.msnfsearch input,.msnfsearch .kbd{position:relative;z-index:1}
+@media (prefers-reduced-motion:reduce){.msnfliquid{transition:opacity .2s ease}.msnfsearch:hover .msnfliquid,.msnfsearch.on .msnfliquid{height:165%;opacity:.1}}
+/* search icon by default; Mel's gradient ring only while Mel is pulling the listing */
+.msnfmel{position:relative;width:20px;height:20px;flex:none}
+.msnfmel svg{width:18px;height:18px;margin:1px;fill:none;stroke:var(--neutral-400);stroke-width:1.8;stroke-linecap:round;transition:opacity .18s ease}
+.msnfring{position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 210deg,#7B7FF5,#5A5FF2,#F08068,#F0A468,#7B7FF5);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.6px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.6px));
+  opacity:0;transition:opacity .18s ease}
+.msnfsearch.loading .msnfmel svg{opacity:0}
+.msnfsearch.loading .msnfring{opacity:1;animation:msnfspin 1s linear infinite}
+@keyframes msnfspin{to{transform:rotate(360deg)}}
+.msnfsearch input{flex:1;min-width:0;border:0;outline:none;background:none;font:15px var(--font);color:var(--neutral-900)}
+.msnfsearch input::placeholder{color:var(--neutral-500);transition:opacity .2s ease}
+.msnfsearch .kbd{font-size:11px;color:var(--neutral-400)}
+@media (prefers-reduced-motion:reduce){.msnfsearch.on,.msnfsearch.loading{animation:none}.msnfsearch.loading .msnfring{animation:none}}
+.msnflabel{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--neutral-500)}
+.msnfrows{display:flex;flex-direction:column;gap:8px;max-width:620px}
+.msnfrow{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px 10px 10px;background:var(--white);border:1px solid var(--neutral-200);border-radius:12px;text-align:left;cursor:pointer;transition:border-color .14s ease,box-shadow .14s ease,transform .14s cubic-bezier(.23,1,.32,1)}
+.msnfrow:hover{border-color:var(--neutral-300);box-shadow:var(--shadow-sm)}
+.msnfrow:active{transform:scale(.99)}
+.msnfrow .th{width:52px;height:40px;flex:none;border-radius:8px;background:var(--neutral-100) center/cover no-repeat}
+.msnfrow .tx{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.msnfrow .tx b{font-size:14px;font-weight:600;color:var(--neutral-900)}
+.msnfrow .tx i{font-style:normal;font-size:12px;color:var(--neutral-500)}
+.msnfrow .pr{font-size:14px;font-weight:600;color:var(--neutral-900);font-variant-numeric:tabular-nums;flex:none}
+.msnfnote{font-size:12.5px;color:var(--neutral-500)}
+
+/* step 2 — intent */
+.msnfchips{display:flex;flex-wrap:wrap;gap:6px}
+.msnfchip{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;background:var(--neutral-100);color:var(--neutral-700);font-size:12px;font-weight:500}
+.msnfgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:1080px){.msnfgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.msnfcard{position:relative;display:flex;flex-direction:column;gap:4px;padding:14px;background:var(--white);border:1px solid var(--neutral-200);border-radius:var(--r-card);text-align:left;cursor:pointer;transition:border-color .14s ease,box-shadow .14s ease,transform .14s cubic-bezier(.23,1,.32,1)}
+.msnfcard:hover{border-color:var(--neutral-300);box-shadow:var(--shadow-sm)}
+.msnfcard:active{transform:scale(.985)}
+.msnfcard .ci{width:30px;height:30px;display:grid;place-items:center;border-radius:8px;background:var(--neutral-100);color:var(--neutral-700);margin-bottom:6px}
+.msnfcard .ci svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.msnfcard b{font-size:14px;font-weight:600;color:var(--neutral-900)}
+.msnfcard i{font-style:normal;font-size:12px;color:var(--neutral-500)}
+.msnfcard.pkg{grid-column:1/-1;border-color:#d6d7fb;background:linear-gradient(0deg,#fbfbff,#fbfbff)}
+.msnfcard.pkg .ci{background:var(--primary);color:#fff}
+.msnfcard .why{display:flex;align-items:flex-start;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--neutral-100);font-size:12px;line-height:17px;color:var(--primary)}
+.msnfcard .why svg{width:13px;height:13px;flex:none;margin-top:2px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.msnfcard.rec{border-color:#b9bcf9;box-shadow:0 0 0 3px rgba(90,95,242,.1)}
+.msnfcard.sel{border-color:var(--primary);box-shadow:0 0 0 3px rgba(90,95,242,.16)}
+
+/* step 2b — package contents */
+.msnfcount{font-size:12px;color:var(--neutral-500);font-variant-numeric:tabular-nums}
+.msnfscope{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (max-width:820px){.msnfscope{grid-template-columns:1fr}}
+.msnfbox{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--white);border:1px solid var(--neutral-200);border-radius:12px;cursor:pointer;transition:border-color .14s ease,background .14s ease}
+.msnfbox:hover{border-color:var(--neutral-300)}
+.msnfbox input{width:16px;height:16px;flex:none;accent-color:var(--primary);cursor:pointer}
+.msnfbox .ci{width:26px;height:26px;flex:none;display:grid;place-items:center;border-radius:7px;background:var(--neutral-100);color:var(--neutral-700)}
+.msnfbox .ci svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.msnfbox .nm{display:flex;flex-direction:column;gap:1px;min-width:0}
+.msnfbox .nm b{font-size:13.5px;font-weight:600;color:var(--neutral-900)}
+.msnfbox .nm i{font-style:normal;font-size:11.5px;color:var(--neutral-500)}
+.msnfbox:has(input:checked){border-color:#c9cbfa;background:#fbfbff}
+/* PRIMARY CTA — solid indigo, one pattern everywhere (Radius: every CTA is #5A5FF2) */
+.msnfgo{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border:0;border-radius:10px;
+  background:var(--primary);color:#fff;font:600 13.5px var(--font);cursor:pointer;
+  transition:filter .14s ease,transform .14s cubic-bezier(.23,1,.32,1)}
+.msnfgo span{color:#fff}
+.msnfgo:hover{filter:brightness(1.06)}
+.msnfgo:active{transform:scale(.97)}
+.msnfgo:disabled{opacity:.45;cursor:default}
+/* MEL CHIP — white pill, Mel gradient border + label: Mel suggestions only */
+.msnfgo.sm{height:30px;padding:0 13px;font:500 12.5px var(--font);border:1px solid transparent;border-radius:999px;
+  background:linear-gradient(var(--white),var(--white)) padding-box,linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468) border-box}
+.msnfgo.sm span{background:linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#5A5FF2}
+.msnfgo.sm:hover{filter:none;box-shadow:0 0 0 3px rgba(90,95,242,.1)}
+
+/* ============ Stage 1 — Feed-post picker page head + action row ============ */
+.msnfs[data-nf="templates"]>.msnfhd{display:flex;flex-direction:column;gap:4px;padding:20px 24px 12px;min-width:0}
+.msnfhd-eb{font:500 11px/1.4 var(--font);color:#737373;letter-spacing:.01em}
+.msnfhd-h{margin:0;font-family:var(--font);font-weight:600;font-size:22px;line-height:1.15;letter-spacing:-.02em;color:#0A0A0A}
+.msnfhd-meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;font:400 14px/1.3 var(--font);color:#737373;font-variant-numeric:tabular-nums;margin-top:2px}
+.msnfhd-meta .msnfhd-dot{color:#D4D4D4}
+.msnfhd-meta .rds-num{color:#0A0A0A;font-variant-numeric:tabular-nums}
+.msnfhd-actions{display:flex;align-items:center;gap:8px;padding:4px 24px 14px;flex-wrap:wrap;border-bottom:1px solid #E5E5E5}
+/* All 3 buttons: white bg, Mel gradient border, Mel gradient text. No icons. */
+.msnfhd-btn{height:32px;padding:0 14px;font:600 13px/1 var(--font);border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;white-space:nowrap;border:1px solid transparent;background:linear-gradient(#FFFFFF,#FFFFFF) padding-box,linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468) border-box;transition:box-shadow .14s ease,transform .1s ease}
+.msnfhd-btn .msnfhd-lbl{background:linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.msnfhd-btn:hover{box-shadow:0 0 0 3px rgba(90,95,242,.1)}
+.msnfhd-btn:active{transform:scale(.98)}
+.msnfhd-btn:focus-visible{outline:2px solid #A3A3A3;outline-offset:2px}
+
+/* ============ Marketing Studio — address screen redesign (full-page, DS-driven) ============ */
+body.msfull .melhist{display:none !important}
+body.msfull .phead{display:none !important}
+body.msfull .melbody{overflow:hidden !important}
+body.msfull .msstudio{min-height:0}
+body.msfull #ms-newflow{max-width:none;padding:0;margin:0;flex:1;display:flex;flex-direction:column;min-height:0}
+body.msfull .msnfs[data-nf="address"],body.msfull .msnfs[data-nf="templates"]{padding:0;text-align:left;align-items:stretch;max-width:none;flex:1;min-height:0}
+body.msfull .msnfs[data-nf="address"].on,body.msfull .msnfs[data-nf="templates"].on{display:flex;flex-direction:column}
+
+.msaf{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;position:relative;background:var(--background)}
+
+/* top row: chevron + Marketing Studio pill */
+.msaf-top{padding:20px 20px 8px;flex:none;display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:var(--space-3);min-height:40px}
+.msaf-back{grid-column:1;justify-self:start;width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:var(--background);border:1px solid var(--border);border-radius:9999px;color:var(--foreground);cursor:pointer;box-shadow:var(--shadow-xs);transition:background .14s cubic-bezier(.23,1,.32,1),border-color .14s ease,box-shadow .14s ease,transform .1s ease}
+.msaf-back:hover{background:var(--neutral-50);border-color:var(--neutral-300);box-shadow:var(--shadow-sm)}
+.msaf-back:active{transform:scale(.96)}
+.msaf-back:focus-visible{outline:none;box-shadow:0 0 0 2px var(--background),0 0 0 4px var(--ring)}
+.msaf-back svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.msaf-eb{grid-column:2;justify-self:center;display:inline-flex;align-items:center;gap:var(--space-2);padding:8px 16px 8px 12px;white-space:nowrap;border-radius:9999px;background:rgba(255,255,255,.62);border:1px solid rgba(230,232,255,.85);box-shadow:0 1px 2px rgba(90,95,242,.06),0 8px 24px -14px rgba(90,95,242,.22);backdrop-filter:blur(16px) saturate(1.6);-webkit-backdrop-filter:blur(16px) saturate(1.6)}
+.msaf-ebring{width:16px;height:16px;flex:none;display:block;border-radius:9999px;background:var(--mel-gradient,conic-gradient(from 0deg,#7B7FF5,#5A5FF2,#F08068,#F0A468,#7B7FF5));-webkit-mask:radial-gradient(circle,transparent 4.6px,#000 5.4px);mask:radial-gradient(circle,transparent 4.6px,#000 5.4px)}
+.msaf-ebtx{font:var(--font-weight-semibold) 13.5px/1 var(--font-sans);letter-spacing:.005em;background:var(--mel-gradient,linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+
+/* hero */
+.msaf-hero{padding:14px 24px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:var(--space-2-5);flex:none}
+.msaf-h1{margin:0;font-family:var(--font-sans);font-weight:var(--font-weight-semibold);font-size:34px;line-height:1.12;letter-spacing:-.02em;color:var(--foreground);max-width:760px;text-wrap:balance}
+.msaf-sub{margin:0;max-width:520px;font:400 14px/1.45 var(--font-sans);color:var(--muted-foreground)}
+
+/* cards region */
+.msaf-scroll{padding:0 24px 110px;min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:smooth;scrollbar-color:var(--neutral-200) transparent;scrollbar-width:thin;position:relative}
+.msaf-topglass{position:sticky;top:0;height:8px;margin:0 -24px 0;pointer-events:none;z-index:2;background:var(--background)}
+.msaf-scroll::-webkit-scrollbar{width:8px}
+.msaf-scroll::-webkit-scrollbar-thumb{background:var(--neutral-200);border-radius:9999px;border:2px solid transparent;background-clip:padding-box;transition:background .16s ease}
+.msaf-scroll::-webkit-scrollbar-thumb:hover{background:var(--neutral-300);background-clip:padding-box}
+.msaf-sec{max-width:1320px;margin:0 auto}
+.msaf-lab{display:block;font-family:var(--font-sans);font-weight:var(--font-weight-semibold);font-size:11px;line-height:1;letter-spacing:.09em;text-transform:uppercase;color:var(--muted-foreground);margin:0 0 12px 4px}
+
+.msaf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+@media (min-width:1200px){.msaf-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* card = rds-card + tweaks for interactive tile */
+.msafcard{position:relative;display:flex;flex-direction:column;text-align:left;padding:12px;cursor:pointer;overflow:hidden;transition:transform .16s cubic-bezier(.23,1,.32,1),box-shadow .16s ease,border-color .16s ease;opacity:0;transform:translateY(6px);animation:msaf-cin .34s cubic-bezier(.23,1,.32,1) forwards;font:inherit}
+.msafcard:nth-child(1){animation-delay:.04s}
+.msafcard:nth-child(2){animation-delay:.08s}
+.msafcard:nth-child(3){animation-delay:.12s}
+.msafcard:nth-child(4){animation-delay:.16s}
+.msafcard:nth-child(5){animation-delay:.20s}
+.msafcard:nth-child(6){animation-delay:.24s}
+.msafcard:nth-child(7){animation-delay:.28s}
+.msafcard:nth-child(8){animation-delay:.32s}
+.msafcard:nth-child(9){animation-delay:.36s}
+.msafcard:nth-child(10){animation-delay:.40s}
+.msafcard:nth-child(11){animation-delay:.44s}
+.msafcard:nth-child(12){animation-delay:.48s}
+@keyframes msaf-cin{to{opacity:1;transform:translateY(0)}}
+@media (hover:hover) and (pointer:fine){
+  .msafcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--neutral-300)}
+}
+.msafcard:focus-visible{outline:none;box-shadow:0 0 0 2px var(--background),0 0 0 4px var(--ring)}
+
+.msafcard-photo{position:relative;display:block;height:0;padding-bottom:58%;background-color:var(--muted);background-size:cover;background-position:center;background-repeat:no-repeat;border-radius:var(--radius-md);overflow:hidden}
+.msafcard-status{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:var(--space-1-5);height:26px;padding:0 12px 0 10px;font-family:var(--font-sans);font-weight:var(--font-weight-semibold);font-size:12px;line-height:1;letter-spacing:.005em;color:#fff;border-radius:9999px;box-shadow:0 4px 12px -4px rgba(10,10,10,.28);white-space:nowrap;z-index:1}
+.msafcard-statusdot{width:6px;height:6px;border-radius:9999px;background:#fff;flex:none}
+.msafcard-status--orange{background:var(--tint-orange-fg,#EA580C)}
+.msafcard-status--green{background:var(--tint-green-fg,#166534)}
+.msafcard-status--blue{background:var(--tint-blue-fg,#1D4ED8)}
+.msafcard-status--indigo{background:var(--base-primary,#5A5FF2)}
+.msafcard-status--amber{background:var(--tint-amber-fg,#A16207)}
+.msafcard-status--red{background:var(--tint-red-fg,#B91C1C)}
+.msafcard-price{position:absolute;left:10px;bottom:10px;padding:6px 12px;font-family:var(--font-sans);font-weight:var(--font-weight-bold);font-size:14px;line-height:1;font-variant-numeric:tabular-nums;color:var(--foreground);background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-radius:var(--radius-md);box-shadow:var(--shadow-sm)}
+
+.msafcard-body{display:flex;flex-direction:column;gap:var(--space-2-5);padding:12px 4px 4px}
+
+.msafcard-titlerow{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-2);min-width:0}
+.msafcard-titlecol{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.msafcard-addr{font-family:var(--font-sans);font-weight:var(--font-weight-semibold);font-size:16px;line-height:1.2;letter-spacing:-.01em;color:var(--foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msafcard-loc{display:flex;align-items:center;gap:5px;font:400 12px/1.3 var(--font-sans);color:var(--muted-foreground);min-width:0}
+.msafcard-loc>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msafcard-loc svg{flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.msafcard-mlspill{display:inline-flex;align-items:center;height:22px;padding:0 10px;font-family:var(--font-sans);font-weight:var(--font-weight-medium);font-size:10.5px;line-height:1;letter-spacing:.02em;color:var(--muted-foreground);background:var(--background);border:1px solid var(--border);border-radius:9999px;font-variant-numeric:tabular-nums;flex:none;white-space:nowrap;margin-top:1px}
+
+.msafcard-chips{display:flex;flex-wrap:wrap;gap:var(--space-1-5)}
+.msafcard-chips .rds-chip{height:26px;font-variant-numeric:tabular-nums}
+.msafcard-chips .rds-chip svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.65}
+
+.msafcard-actions{display:flex;align-items:stretch;gap:var(--space-2);margin-top:2px}
+.msafcard-chips{align-items:center}
+.msafcard-chips .msafcard-primary{margin-left:auto}
+
+.msafcard-sug{flex:1;position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:flex-start;gap:var(--space-1-5);height:36px;padding:0 10px;background:linear-gradient(90deg,rgba(123,127,245,.08) 0,rgba(240,164,104,.08) 100%);border:1px solid rgba(123,127,245,.24);border-radius:var(--radius-md);cursor:pointer;font:inherit;min-width:0;transition:border-color .14s ease,background .14s ease,transform .1s ease}
+.msafcard-sug:hover{border-color:rgba(90,95,242,.42);background:linear-gradient(90deg,rgba(123,127,245,.12) 0,rgba(240,164,104,.12) 100%)}
+.msafcard-sug::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-100%);animation:msaf-shim 3.8s cubic-bezier(.4,0,.2,1) infinite;pointer-events:none}
+@keyframes msaf-shim{0%{transform:translateX(-100%)}55%,100%{transform:translateX(120%)}}
+.msafcard-diamond{width:14px;height:14px;flex:none;display:inline-block;background:var(--mel-gradient,linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468));-webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2 9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z'/></svg>") center/contain no-repeat;mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2 9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z'/></svg>") center/contain no-repeat;position:relative;z-index:1}
+.msafcard-hinttx{font-family:var(--font-sans);font-weight:var(--font-weight-semibold);font-size:12px;line-height:1.2;background:var(--mel-gradient,linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;min-width:0;position:relative;z-index:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.msafcard-sug:active{transform:scale(.98)}
+
+.msafcard-nosug{flex:1;display:inline-flex;align-items:center;gap:var(--space-1-5);height:36px;padding:0 12px;background:var(--muted);color:var(--muted-foreground);border:1px dashed var(--border);border-radius:var(--radius-md);font-family:var(--font-sans);font-weight:var(--font-weight-medium);font-size:12px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.msafcard-nosugdot{width:6px;height:6px;border-radius:9999px;background:var(--neutral-300);flex:none}
+.msafcard-primary{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:#5A5FF2;border:0;border-radius:var(--radius-md);color:#fff;font-family:var(--font-sans);font-weight:var(--font-weight-semibold);font-size:12.5px;line-height:1;cursor:pointer;box-shadow:0 4px 12px -4px rgba(90,95,242,.4);transition:background .14s ease,box-shadow .14s ease,transform .16s cubic-bezier(.23,1,.32,1);white-space:nowrap;flex:none}
+.msafcard-primary svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .16s cubic-bezier(.23,1,.32,1)}
+.msafcard:hover .msafcard-primary svg{transform:translateX(2px)}
+.msafcard-primary:hover{background:transparent;color:#4A4FE5}
+.msafcard-primary:active{transform:scale(.97)}
+.msafcard-primary:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ring)}
+
+/* sticky search */
+.msaf-searchwrap{position:absolute;left:0;right:0;bottom:0;padding:22px 24px 26px;background:var(--background);z-index:5}
+.msaf-searchpos{position:relative;max-width:720px;margin:0 auto;isolation:isolate}
+/* Create template sits back inside the pill; it still morphs into the branding rail. */
+.msaf-search .msaf-ctabtn{transition:opacity .16s ease,transform 160ms cubic-bezier(.23,1,.32,1),border-color 140ms ease,box-shadow 160ms cubic-bezier(.23,1,.32,1)}
+/* Ambient corner glows — decorative idle animation, only transform+opacity, custom easing */
+.msaf-glow{position:absolute;top:50%;width:160px;height:80px;border-radius:9999px;pointer-events:none;filter:blur(30px);z-index:0;will-change:transform,opacity;animation:msaf-glowpulse 3.4s cubic-bezier(.4,0,.6,1) infinite alternate}
+.msaf-glow--l{left:-40px;background:radial-gradient(closest-side,#F08068 0%,rgba(240,128,104,0) 72%)}
+.msaf-glow--r{right:-40px;background:radial-gradient(closest-side,#7B7FF5 0%,rgba(123,127,245,0) 72%);animation-delay:-1.7s}
+@keyframes msaf-glowpulse{
+  from{opacity:.45;transform:translateY(-50%) scale(.92)}
+  to{opacity:.85;transform:translateY(-50%) scale(1.08)}
+}
+
+.msaf-search{position:relative;z-index:1;display:flex;align-items:center;gap:var(--space-2-5);height:52px;padding:0 6px 0 var(--space-4);
+  background:linear-gradient(var(--background),var(--background)) padding-box, linear-gradient(90deg,#F08068 0%,#E5E5E5 30%,#E5E5E5 70%,#7B7FF5 100%) border-box;
+  border:1.5px solid transparent;
+  border-radius:12px;
+  box-shadow:0 1px 2px rgba(10,10,10,.04),0 12px 28px -14px rgba(10,10,10,.14);
+  transition:box-shadow .18s cubic-bezier(.23,1,.32,1)}
+.msaf-search:hover{box-shadow:0 1px 2px rgba(10,10,10,.04),0 16px 32px -14px rgba(10,10,10,.18)}
+.msaf-search.on{box-shadow:0 0 0 3px color-mix(in oklab,var(--base-primary,#5A5FF2) 10%,transparent),0 12px 28px -14px rgba(10,10,10,.14)}
+.msaf-search.miss{background:linear-gradient(var(--background),var(--background)) padding-box, linear-gradient(90deg,var(--destructive),var(--destructive)) border-box;box-shadow:0 0 0 3px color-mix(in oklab,var(--destructive) 12%,transparent)}
+.msaf-sicon{width:18px;height:18px;flex:none;color:var(--muted-foreground)}
+.msaf-sicon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.msaf-search input{flex:1;min-width:0;border:0;outline:none;background:none;font:15px/1 var(--font-sans);color:var(--foreground)}
+.msaf-search input::placeholder{color:var(--muted-foreground)}
+
+.msaf-kbd{display:inline-flex;align-items:center;gap:4px;flex:none;padding-right:8px}
+.msaf-key{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 6px;font-family:var(--font-sans);font-weight:var(--font-weight-medium);font-size:12px;line-height:1;color:var(--muted-foreground);background:var(--muted);border:1px solid var(--border);border-radius:6px;box-shadow:inset 0 -1px 0 rgba(10,10,10,.04)}
+.msaf-kbdsep{font:400 12px/1 var(--font-sans);color:var(--muted-foreground)}
+
+@media (prefers-reduced-motion:reduce){
+  .msaf-glow{animation:none;opacity:.55;transform:translateY(-50%) scale(1)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .msafcard-sug::before{animation:none}
+  .msafcard{animation:none;opacity:1;transform:none}
+  .msafcard:hover{transform:none}
+}
+
+/* Workflows head matches the listing/address head exactly: the same gradient-ring pill eyebrow
+   (mel-icon.svg reads as an infinity glyph at 16px — the CSS ring is the correct mark), the same
+   34px h1, and the same vertical placement. Measured: with .phead hidden, .melbody starts at the
+   panel's inner top; .msnf adds 18px + 6px, so -5px lands the pill at 20px — the listing value
+   (.msaf-top{padding:20px} with #ms-newflow{padding:0} under body.msfull).
+   Pill-to-h1 there is 8 (top pad-bottom) + 14 (hero pad-top) = 22px; matched with margin-bottom.
+   Sub gap there is --space-2-5 (10px); .mshead's default 6px is raised to match. */
+.msnfs[data-nf="workflows"] .mshead{gap:10px}
+.msnfs[data-nf="workflows"] .mshead .msaf-eb{grid-column:auto;justify-self:auto;align-self:center;margin-bottom:12px}
+.msnfs[data-nf="workflows"] .mshead h2{font-size:34px;line-height:1.12;letter-spacing:-.02em;max-width:760px;text-wrap:balance}
+.msnfs[data-nf="workflows"] .mshead p{font-size:14px;line-height:1.45;max-width:520px}
+
+/* ============ Marketing Studio — templates page (mirrors address home) ============ */
+/* Reuses .msaf-* layout; adds format tabs + Mel-picked badge + template card variant. */
+.msnfs[data-nf="templates"] .msaf-hero .msaf-h1 [data-nfaddr]{display:inline;color:var(--muted-foreground);font-weight:600}
+
+.msaf-tabs{flex:none;display:inline-flex;align-self:flex-start;align-items:center;gap:2px;padding:2px;margin:0 20px 4px;background:var(--neutral-100);border-radius:10px;overflow:visible;max-width:calc(100% - 40px)}
+.msaf-tabs::-webkit-scrollbar{display:none}
+.msaf-tab{appearance:none;background:transparent;border:0;padding:0 10px;height:26px;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font:600 13px/1 var(--font-sans);font-variation-settings:"wght" 600,"wdth" 100;color:var(--neutral-500);flex:none;white-space:nowrap;transition:background .12s ease,color .12s ease,box-shadow .12s ease}
+.msaf-tab .msaf-tabico{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;opacity:.75}
+.msaf-tab.on .msaf-tabico{opacity:1;color:var(--primary)}
+.msaf-moregroup{position:relative;display:inline-flex;flex:none}
+.msaf-tabmore .msaf-tabchev{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.7;transition:transform .16s ease;margin-left:-2px}
+.msaf-tabmore[aria-expanded="true"] .msaf-tabchev{transform:rotate(180deg);opacity:1}
+.msaf-morepop{position:absolute;top:calc(100% + 6px);right:0;min-width:200px;background:var(--white);border:1px solid var(--neutral-200);border-radius:10px;box-shadow:var(--shadow-md);padding:4px;z-index:40;display:flex;flex-direction:column;gap:1px}
+.msaf-morepop[hidden]{display:none}
+.msaf-moreitem{appearance:none;background:transparent;border:0;padding:0 10px;height:32px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;font:500 13px/1 var(--font-sans);color:var(--neutral-700);text-align:left;width:100%;transition:background .12s ease,color .12s ease}
+.msaf-moreitem .msaf-moreico{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.7;flex:none}
+.msaf-moreitem .msaf-morelbl{flex:1;min-width:0}
+.msaf-moreitem .msaf-tabcnt{background:rgba(10,10,10,.06);color:var(--neutral-600)}
+.msaf-moreitem:hover{background:var(--neutral-100);color:var(--neutral-900)}
+.msaf-moreitem.on{color:var(--primary);background:rgba(90,95,242,.06)}
+.msaf-moreitem.on .msaf-moreico{opacity:1;color:var(--primary)}
+.msaf-tab .msaf-tabcnt{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 6px;border-radius:6px;background:rgba(10,10,10,.06);color:var(--neutral-600);font-family:var(--font-sans);font-size:11px;line-height:1;font-weight:600;font-variant-numeric:tabular-nums}
+.msaf-tab:hover:not(.on){color:var(--neutral-900)}
+.msaf-tab.on{background:var(--white);color:var(--neutral-900);font-weight:800;box-shadow:0 1px 2px rgba(10,10,10,.10),0 0 0 .5px rgba(10,10,10,.04)}
+.msaf-tab.on .msaf-tabcnt{background:var(--neutral-100);color:var(--neutral-700)}
+.msaf-tab:focus-visible{outline:none;box-shadow:0 0 0 2px var(--background),0 0 0 4px var(--ring)}
+
+/* Template card variant of msafcard */
+.msafcard--tpl{cursor:pointer}
+.msafcard-photo--tpl{padding-bottom:100%;background-color:var(--neutral-100);background-image:none}
+.msafcard-photo--tpl > .prev{position:absolute;inset:0;aspect-ratio:auto;border-radius:0;width:100%;height:100%}
+
+/* Mel-picked pill (top-right) — Mel identity, so the Mel gradient is used */
+.msafcard-melbadge{position:absolute;right:10px;top:10px;display:none;align-items:center;gap:6px;height:26px;padding:0 12px 0 8px;background:#fff;color:var(--foreground);border-radius:9999px;font-family:var(--font-sans);font-weight:600;font-size:11px;letter-spacing:.01em;box-shadow:0 6px 18px rgba(240,128,104,.32),0 0 0 1px rgba(90,95,242,.2);z-index:2}
+.msafcard-melbadge .msafcard-meldot{width:10px;height:10px;border-radius:50%;background:conic-gradient(from 0deg,#7B7FF5,#5A5FF2,#F08068,#F0A468,#7B7FF5);flex:none;box-shadow:0 0 6px rgba(240,128,104,.55)}
+.msafcard--tpl.melpick .msafcard-melbadge{display:inline-flex;animation:msaf-cin .3s ease .1s both}
+.msafcard--tpl.melpick{border-color:var(--primary);box-shadow:0 0 0 2px rgba(90,95,242,.18),var(--shadow-sm)}
+.msafcard--tpl.melpick .msafcard-sug{background:rgba(90,95,242,.06);border-color:transparent;color:var(--primary)}
+.msafcard--tpl.melpick .msafcard-sug .msafcard-diamond{background:conic-gradient(from 0deg,#7B7FF5,#5A5FF2,#F08068,#F0A468,#7B7FF5)}
+.msafcard--tpl.hide{display:none}
+.msafcard--tpl .msafcard-status,.msafcard--tpl .msafcard-melbadge{z-index:4}
+
+/* ============ Templates screen — hero actions ============ */
+.msaf-hero{position:relative}
+.msaf-heroactions{display:flex;gap:8px;align-items:center;margin-top:14px}
+@media (min-width:920px){.msaf-heroactions{position:absolute;top:0;right:0;margin-top:0}}
+.msaf-upload,.msaf-package{appearance:none;height:36px;padding:0 14px;border-radius:10px;font:600 13px var(--font-sans);cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;transition:background .12s ease,border-color .12s ease,box-shadow .12s ease}
+.msaf-upload{background:var(--white);color:var(--foreground);border:1px solid var(--neutral-200)}
+.msaf-upload:hover{border-color:var(--neutral-300);background:var(--neutral-50);box-shadow:var(--shadow-xs)}
+.msaf-upload svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.msaf-package{background:var(--primary);color:#fff;border:0}
+.msaf-package:hover{background:#4a4fe0}
+.msaf-package:active{transform:scale(.985)}
+.msaf-package svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.msaf-package-cnt{background:rgba(255,255,255,.22);color:#fff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;letter-spacing:.02em}
+.msaf-package.on{background:linear-gradient(90deg,#5A5FF2 0%,#F08068 100%);box-shadow:0 6px 18px rgba(240,128,104,.28)}
+.msaf-package.on .msaf-package-cnt{background:rgba(255,255,255,.28)}
+
+/* Package-mode banner over the grid */
+.msaf-pkgbanner{display:none;align-items:center;gap:10px;padding:10px 14px;margin:0 20px 12px;background:linear-gradient(90deg,rgba(90,95,242,.06),rgba(240,128,104,.06));border:1px solid rgba(90,95,242,.24);border-radius:10px;color:var(--foreground);font:500 13px var(--font-sans)}
+body.msaf-pkgmode .msaf-pkgbanner{display:flex}
+/* Package mode keeps the format tabs LIVE — multi-select means hopping tabs by hand. */
+body.msaf-pkgmode .msaf-tabs{opacity:1;pointer-events:auto}
+/* pick count per asset tab — shown whenever anything is selected, package mode or not */
+.msaf-tabpick{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:6px;background:var(--primary);color:#fff;font:700 11px/1 var(--font-sans);font-variant-numeric:tabular-nums;letter-spacing:.01em;flex:none}
+.msaf-moreitem .msaf-tabpick{margin-left:4px}
+/* Combined-mode single-intent trips (Feed post, Story, Reel, TikTok, X, Website, etc.):
+   the format tabs are meaningless — we only show templates for that one context. */
+body.msaf-hidefmttabs .msaf-tabs{display:none !important}
+
+/* ============ Templates screen — floating action bar (mirrors .msaf-searchwrap) ============ */
+/* leave room at the bottom of the grid so cards don't sit under the bar */
+.msnfs[data-nf="templates"] .msaf-scroll{padding-bottom:104px}
+.msaf-actionwrap{position:absolute;left:0;right:0;bottom:0;padding:22px 24px 26px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,var(--background) 40%,var(--background) 100%);z-index:5;pointer-events:none}
+.msaf-actionpos{position:relative;width:fit-content;max-width:100%;margin:0 auto;isolation:isolate;pointer-events:auto}
+.msaf-actionbar{position:relative;z-index:1;display:inline-flex;align-items:center;gap:0;padding:6px;
+  background:linear-gradient(var(--background),var(--background)) padding-box, linear-gradient(90deg,#F08068 0%,#E5E5E5 30%,#E5E5E5 70%,#7B7FF5 100%) border-box;
+  border:1.5px solid transparent;border-radius:12px;
+  box-shadow:0 1px 2px rgba(10,10,10,.04),0 16px 32px -14px rgba(10,10,10,.16);
+  transition:box-shadow .18s cubic-bezier(.23,1,.32,1)}
+.msaf-actionbar:hover{box-shadow:0 1px 2px rgba(10,10,10,.04),0 20px 40px -14px rgba(10,10,10,.22)}
+.msaf-actionsep{width:1px;height:20px;background:var(--neutral-200);flex:none;margin:0 4px}
+.msaf-actionbtn{appearance:none;display:inline-flex;align-items:center;gap:10px;padding:0 14px 0 6px;height:40px;border-radius:10px;background:transparent;border:0;cursor:pointer;font:600 13.5px var(--font-sans);color:var(--neutral-900);white-space:nowrap;transition:background .12s ease;position:relative}
+.msaf-actionbtn:hover{background:var(--neutral-100)}
+.msaf-actionbtn:focus-visible{outline:none;box-shadow:0 0 0 2px var(--background),0 0 0 4px var(--ring)}
+.msaf-actionico{width:28px;height:28px;border-radius:8px;background:var(--neutral-100);color:var(--neutral-700);display:inline-flex;align-items:center;justify-content:center;flex:none;transition:background .12s,color .12s}
+.msaf-actionico svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.msaf-actionbtn.primary{background:linear-gradient(90deg,rgba(240,128,104,.10) 0%,rgba(240,164,104,.08) 30%,rgba(123,127,245,.08) 70%,rgba(90,95,242,.10) 100%);background-size:220% 100%;animation:msaf-btn-shift 6s ease-in-out infinite alternate}
+.msaf-actionbtn.primary:hover{background:linear-gradient(90deg,rgba(240,128,104,.16) 0%,rgba(240,164,104,.12) 30%,rgba(123,127,245,.12) 70%,rgba(90,95,242,.16) 100%);background-size:220% 100%}
+@keyframes msaf-btn-shift{from{background-position:0% 50%}to{background-position:100% 50%}}
+.msaf-actioncnt{background:rgba(10,10,10,.06);color:var(--neutral-700);border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;letter-spacing:.02em}
+.msaf-actionbtn.on{background:rgba(90,95,242,.08);color:var(--primary)}
+.msaf-actionbtn.on .msaf-actioncnt{background:rgba(90,95,242,.18);color:var(--primary)}
+
+/* Hide unused old .msaf-heroactions styles (they still ship harmlessly) */
+.msaf-heroactions{display:none !important}
+.msaf-pkgbanner .msaf-pkgdot{width:16px;height:16px;border-radius:50%;background:conic-gradient(from 0deg,#7B7FF5,#5A5FF2,#F08068,#F0A468,#7B7FF5);flex:none;box-shadow:0 0 8px rgba(240,128,104,.5)}
+.msaf-pkgbanner b{font-weight:700}
+.msaf-pkgclear{margin-left:auto;appearance:none;height:26px;padding:0 10px;border-radius:8px;background:var(--white);border:1px solid var(--neutral-200);color:var(--neutral-700);font:500 12px var(--font-sans);cursor:pointer}
+.msaf-pkgclear:hover{background:var(--neutral-50);color:var(--neutral-900)}
+.msafcard--tpl .msafcard-actions .msafcard-sug{flex:1;min-width:0}
+.msafcard--tpl .msafcard-actions .msafcard-sug .msafcard-hinttx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.msafcard--tpl .msafcard-primary{display:none !important}
+.msafcard--tpl .msafcard-photo--tpl{position:relative}
+.msafcard-tplhover{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,10,.28);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:3}
+@media (hover:hover) and (pointer:fine){.msafcard--tpl:hover .msafcard-tplhover{opacity:1}}
+.msafcard--tpl:focus-within .msafcard-tplhover{opacity:1}
+/* hover actions moved to mel/34-tplhover-css.css (icon-only Edit template + View) */
+
+/* ============ Milestone template (Just listed / Sold / Under contract — one design, three status variants) ============ */
+.prev.tpl-milestone{background:#0a0a0a}
+.prev.tpl-milestone > .ph{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat}
+.msafcard--tpl[data-nftpl="milestone"] .msafcard-photo--tpl{background-color:#0a0a0a}
+/* status chip trio: visible affordance that this template ships in 3 states */
+.msafcard--tpl[data-nftpl="milestone"] .mstn-vars{position:absolute;left:10px;bottom:10px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font:600 10.5px/1 var(--font);letter-spacing:.01em;color:var(--neutral-900);box-shadow:0 1px 6px rgba(10,10,10,.25)}
+.msafcard--tpl[data-nftpl="milestone"] .mstn-vars .dot{width:6px;height:6px;border-radius:50%;background:var(--neutral-900)}
+.msafcard--tpl[data-nftpl="milestone"] .mstn-vars .dot.gd{background:#6DA544}
+.msafcard--tpl[data-nftpl="milestone"] .mstn-vars .dot.rd{background:#DC2626}
+
+/* ============ Split template (Crestview diagonal — 3 status variants) ============ */
+.prev.tpl-split{background:#0a0a0a;overflow:hidden}
+.prev.tpl-split .tsplt-strip{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px}
+.prev.tpl-split .tsplt-mini{position:relative;border-radius:6px;background:#F4EFE5 no-repeat center/cover;box-shadow:0 1px 3px rgba(0,0,0,.28);overflow:hidden}
+.prev.tpl-split .tsplt-mini i{position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font:600 8.5px/1.2 var(--font);letter-spacing:.02em;color:#fff;background:linear-gradient(180deg,rgba(10,10,10,0),rgba(10,10,10,.86));text-align:left;font-style:normal;text-transform:uppercase}
+.prev.tpl-split .tsplt-hd{position:absolute;left:8px;right:8px;bottom:8px;z-index:3;display:none;padding:4px 8px;border-radius:6px;background:rgba(10,10,10,.72);color:#fff;font:500 10px/1.2 var(--font);letter-spacing:.01em}
+.msafcard--tpl[data-nftpl="split"] .msafcard-photo--tpl{background-color:#0a0a0a}
+.msafcard--tpl[data-nftpl="split"]:hover .prev.tpl-split .tsplt-hd,.msafcard--tpl[data-nftpl="split"].on .prev.tpl-split .tsplt-hd{display:block}
+
+/* ============ Real templates from Figma (Crestview Realty pack) ============ */
+.prev.tpl-jl,.prev.tpl-uc,.prev.tpl-js,.prev.tpl-jls{background:#3a3f45;color:#fff}
+.prev.tpl-jl > .ph,.prev.tpl-uc > .ph,.prev.tpl-js > .ph,.prev.tpl-jls > .ph{position:absolute;inset:0;background-size:cover;background-position:center}
+.prev.tpl-jl::before,.prev.tpl-uc::before,.prev.tpl-js::before,.prev.tpl-jls::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:1}
+.prev.tpl-jl .headline,.prev.tpl-uc .headline,.prev.tpl-js .headline,.prev.tpl-jls .headline{position:absolute;left:6%;right:6%;top:9%;text-align:center;color:#fff;z-index:2;font-family:'Playfair Display',ui-serif,Georgia,serif;font-weight:400;font-size:38px;line-height:.98;letter-spacing:.005em}
+.prev.tpl-jls .headline{font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;font-weight:300;font-size:34px;letter-spacing:.04em}
+.prev.tpl-jl .headline em,.prev.tpl-uc .headline em,.prev.tpl-js .headline em,.prev.tpl-jls .headline em{display:block;font-style:normal;margin-top:2px}
+.prev.tpl-jl .addr,.prev.tpl-uc .addr,.prev.tpl-js .addr,.prev.tpl-jls .addr{position:absolute;left:6%;right:6%;top:44%;text-align:center;color:#fff;z-index:2;font:400 10px/1.3 'Montserrat',var(--font-sans);letter-spacing:.03em}
+.prev.tpl-jl .brand,.prev.tpl-uc .brand,.prev.tpl-js .brand,.prev.tpl-jls .brand{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);width:38%;height:14%;background:no-repeat center/contain;z-index:2;opacity:.95}
+
+/* Open House Flyer */
+.prev.tpl-ohf{background:#F5F1EA}
+.prev.tpl-ohf > .ph{position:absolute;left:8%;right:8%;top:26%;bottom:34%;background-size:cover;background-position:center;border-radius:2px}
+.prev.tpl-ohf .kick{position:absolute;left:0;right:0;top:7%;text-align:center;font-family:'Playfair Display',serif;font-weight:400;font-size:20px;letter-spacing:.06em;color:#2b2b2b;z-index:2}
+.prev.tpl-ohf .rule{position:absolute;left:32%;right:32%;top:18%;height:1px;background:#a8967b;z-index:2}
+.prev.tpl-ohf .foot{position:absolute;left:6%;right:6%;bottom:6%;text-align:center;color:#2b2b2b;z-index:2}
+.prev.tpl-ohf .foot b{display:block;font-family:'Playfair Display',serif;font-weight:400;font-size:14px}
+.prev.tpl-ohf .foot i{display:block;font-style:normal;font:400 9px/1.4 'Montserrat',var(--font-sans);color:#6b6155;margin-top:4px;letter-spacing:.02em}
+
+/* Property website */
+.prev.tpl-web{background:#0a0a0a}
+.prev.tpl-web > .ph{position:absolute;inset:0;background-size:cover;background-position:center}
+.prev.tpl-web::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 32%,rgba(0,0,0,0) 55%,rgba(0,0,0,.65) 100%);z-index:1}
+.prev.tpl-web .navbar{position:absolute;top:6%;left:6%;right:6%;display:flex;justify-content:space-between;font:600 7px 'Montserrat',var(--font-sans);color:#fff;letter-spacing:.14em;text-transform:uppercase;z-index:2}
+.prev.tpl-web .navbar span{opacity:.9}
+.prev.tpl-web .hero-title{position:absolute;left:6%;right:6%;bottom:11%;color:#fff;font-family:'Playfair Display',serif;font-weight:400;font-size:20px;line-height:1.1;letter-spacing:-.01em;z-index:2}
+.prev.tpl-web .hero-sub{position:absolute;left:6%;right:6%;bottom:5%;color:#fff;font:400 8px/1.2 'Montserrat',var(--font-sans);z-index:2;opacity:.85;letter-spacing:.03em}
+
+/* Variants: darker scrim, indigo tint, sepia tint, light scrim */
+.prev.tpl-jl.v-dark::before,.prev.tpl-jls.v-dark::before,.prev.tpl-uc.v-dark::before,.prev.tpl-js.v-dark::before{background:rgba(0,0,0,.72)}
+.prev.tpl-jl.v-light::before,.prev.tpl-jls.v-light::before,.prev.tpl-uc.v-light::before,.prev.tpl-js.v-light::before{background:rgba(255,255,255,.25)}
+.prev.tpl-jl.v-indigo::before,.prev.tpl-jls.v-indigo::before,.prev.tpl-uc.v-indigo::before,.prev.tpl-js.v-indigo::before{background:linear-gradient(180deg,rgba(90,95,242,.62),rgba(240,128,104,.5))}
+.prev.tpl-jl.v-sepia::before,.prev.tpl-uc.v-sepia::before,.prev.tpl-js.v-sepia::before{background:rgba(56,42,28,.55)}
+.prev.tpl-jl.v-forest::before,.prev.tpl-uc.v-forest::before{background:rgba(24,58,44,.6)}
+.prev.tpl-jl.v-plum::before,.prev.tpl-uc.v-plum::before,.prev.tpl-js.v-plum::before{background:rgba(56,20,52,.62)}
+/* headline placements */
+.prev.tpl-jl.v-corner .headline,.prev.tpl-jls.v-corner .headline,.prev.tpl-uc.v-corner .headline,.prev.tpl-js.v-corner .headline{text-align:left;left:8%;right:auto;max-width:70%;top:8%;font-size:32px}
+.prev.tpl-jl.v-corner .addr,.prev.tpl-jls.v-corner .addr,.prev.tpl-uc.v-corner .addr,.prev.tpl-js.v-corner .addr{text-align:left;left:8%;right:auto;top:38%}
+.prev.tpl-jl.v-bottom .headline,.prev.tpl-jls.v-bottom .headline,.prev.tpl-uc.v-bottom .headline,.prev.tpl-js.v-bottom .headline{top:auto;bottom:22%}
+.prev.tpl-jl.v-bottom .addr,.prev.tpl-jls.v-bottom .addr,.prev.tpl-uc.v-bottom .addr,.prev.tpl-js.v-bottom .addr{top:auto;bottom:14%}
+.prev.tpl-jl.v-huge .headline,.prev.tpl-uc.v-huge .headline,.prev.tpl-js.v-huge .headline{font-size:44px;line-height:.9}
+.prev.tpl-jl.v-tight .headline,.prev.tpl-jls.v-tight .headline{font-size:28px;letter-spacing:0}
+
+/* Flyer variants: sans OPEN HOUSE, dark flyer, cream feature */
+.prev.tpl-ohf.v-sans .kick{font-family:'Montserrat',var(--font-sans);font-weight:300;letter-spacing:.24em;font-size:16px}
+.prev.tpl-ohf.v-dark{background:#0e0e0e;color:#f5f1ea}
+.prev.tpl-ohf.v-dark .kick{color:#fff}
+.prev.tpl-ohf.v-dark .foot{color:#fff}
+.prev.tpl-ohf.v-dark .foot i{color:#c8bfae}
+.prev.tpl-ohf.v-dark .rule{background:#c8bfae}
+.prev.tpl-ohf.v-cream{background:#EAE1CD}
+.prev.tpl-ohf.v-cream .rule{background:#5a5245}
+.prev.tpl-ohf.v-nophoto > .ph{display:none}
+.prev.tpl-ohf.v-nophoto .kick{top:36%;font-size:26px}
+.prev.tpl-ohf.v-nophoto .rule{top:47%}
+.prev.tpl-ohf.v-nophoto .foot{bottom:18%}
+
+/* Web variants */
+.prev.tpl-web.v-serif .hero-title{font-size:24px}
+.prev.tpl-web.v-sans .hero-title{font-family:'Montserrat',var(--font-sans);font-weight:400;font-size:18px;letter-spacing:0}
+.prev.tpl-web.v-light{background:#f6f4ef}
+.prev.tpl-web.v-light::before{background:linear-gradient(180deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 60%,rgba(0,0,0,.35) 100%)}
+.prev.tpl-web.v-light .navbar,.prev.tpl-web.v-light .hero-title{color:#0a0a0a}
+.prev.tpl-web.v-light .hero-sub{color:#0a0a0a;opacity:.8}
+.prev.tpl-web.v-split > .ph{inset:0 0 34% 0}
+.prev.tpl-web.v-split::after{content:'';position:absolute;left:0;right:0;bottom:0;height:34%;background:#f6f4ef;z-index:2}
+.prev.tpl-web.v-split .hero-title{color:#0a0a0a;bottom:18%;z-index:3}
+.prev.tpl-web.v-split .hero-sub{color:#525252;z-index:3}
+.prev.tpl-web.v-split .navbar{color:#fff}
+
+/* Business card (front) */
+.prev.tpl-card{background:#f6f4ef}
+.prev.tpl-card .logo{position:absolute;left:50%;top:22%;transform:translateX(-50%);width:52%;height:26%;background:no-repeat center/contain}
+.prev.tpl-card .rule{position:absolute;left:22%;right:22%;top:56%;height:1px;background:#a8967b}
+.prev.tpl-card .who{position:absolute;left:0;right:0;top:60%;text-align:center;font-family:'Montserrat',var(--font-sans);font-weight:600;font-size:14px;color:#414a56;letter-spacing:.04em}
+.prev.tpl-card .role{position:absolute;left:0;right:0;top:70%;text-align:center;font:400 9px 'Montserrat',var(--font-sans);color:#414a56;letter-spacing:.14em;text-transform:uppercase}
+.prev.tpl-card .contact{position:absolute;left:0;right:0;bottom:8%;text-align:center;font:400 9px/1.4 'Montserrat',var(--font-sans);color:#6b6155;letter-spacing:.02em}
+.prev.tpl-card.v-dark{background:#0e0e0e}
+.prev.tpl-card.v-dark .who,.prev.tpl-card.v-dark .role,.prev.tpl-card.v-dark .contact{color:#fff}
+.prev.tpl-card.v-dark .rule{background:#7d7d7d}
+.prev.tpl-card.v-indigo{background:#5A5FF2}
+.prev.tpl-card.v-indigo .who,.prev.tpl-card.v-indigo .role,.prev.tpl-card.v-indigo .contact{color:#fff}
+.prev.tpl-card.v-indigo .rule{background:#fff;opacity:.4}
+.prev.tpl-card.v-serif .who{font-family:'Playfair Display',serif;font-weight:400;font-size:17px;letter-spacing:0}
+.prev.tpl-card.v-cream{background:#EAE1CD}
+.prev.tpl-card.v-back{background:#f6f4ef}
+.prev.tpl-card.v-back .logo{display:none}
+.prev.tpl-card.v-back .who{top:44%;font-family:'Playfair Display',serif;font-weight:400;font-size:18px;letter-spacing:0}
+.prev.tpl-card.v-back .rule{top:55%}
+.prev.tpl-card.v-back .role{top:60%}
+
+/* Signs */
+.prev.tpl-sign{background:#f6f4ef}
+.prev.tpl-sign .logo{position:absolute;left:50%;top:24%;transform:translateX(-50%);width:60%;height:34%;background:no-repeat center/contain}
+.prev.tpl-sign .url{position:absolute;left:0;right:0;bottom:10%;text-align:center;font-family:'Montserrat',var(--font-sans);font-weight:600;font-size:16px;color:#414a56;letter-spacing:.04em}
+.prev.tpl-sign .rule{position:absolute;left:8%;right:8%;top:70%;height:1px;background:#d1d1d1}
+.prev.tpl-sign.v-dark{background:#0e0e0e}
+.prev.tpl-sign.v-dark .url{color:#fff}
+.prev.tpl-sign.v-dark .rule{background:#3d3d3d}
+.prev.tpl-sign.v-indigo{background:#5A5FF2}
+.prev.tpl-sign.v-indigo .url{color:#fff}
+.prev.tpl-sign.v-indigo .rule{background:#fff;opacity:.35}
+.prev.tpl-sign.v-serif .url{font-family:'Playfair Display',serif;font-weight:400;font-size:18px;letter-spacing:0}
+.prev.tpl-sign.v-openhouse .logo{display:none}
+.prev.tpl-sign.v-openhouse::before{content:'OPEN HOUSE';position:absolute;left:0;right:0;top:20%;text-align:center;font-family:'Playfair Display',serif;font-size:26px;letter-spacing:.06em;color:#0a0a0a;z-index:2}
+.prev.tpl-sign.v-openhouse .rule{top:38%}
+.prev.tpl-sign.v-openhouse .url{bottom:32%;font-size:11px;letter-spacing:.06em}
+/* Riders: horizontal strips */
+.prev.tpl-sign.v-rider{background:#f6f4ef}
+.prev.tpl-sign.v-rider .logo{display:none}
+.prev.tpl-sign.v-rider::before{content:'FOR SALE';position:absolute;left:0;right:0;top:40%;text-align:center;font-family:'Montserrat',var(--font-sans);font-weight:700;font-size:24px;letter-spacing:.16em;color:#414a56}
+.prev.tpl-sign.v-rider .url{display:none}
+.prev.tpl-sign.v-name{background:#f6f4ef}
+.prev.tpl-sign.v-name .logo{display:none}
+.prev.tpl-sign.v-name::before{content:'Alex Chen';position:absolute;left:0;right:0;top:32%;text-align:center;font-family:'Montserrat',var(--font-sans);font-weight:700;font-size:22px;color:#414a56}
+.prev.tpl-sign.v-name::after{content:'License · DRE 01923456';position:absolute;left:0;right:0;top:52%;text-align:center;font:400 10px 'Montserrat',var(--font-sans);color:#6b6155;letter-spacing:.04em}
+.prev.tpl-sign.v-name .url{display:none}
+
+
+/* templates grid: first cards fade+lift in when a tab filter repaints the grid.
+   Capped at 8 so the grid never feels slow; decoration only, never blocks a click. */
+@keyframes msafCardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msnfs[data-nf="templates"] .msafcard--tpl:not(.hide){animation:msafCardIn 200ms cubic-bezier(.23,1,.32,1) both}
+.msnfs[data-nf="templates"] .msafcard--tpl:nth-child(1){animation-delay:0ms}
+.msnfs[data-nf="templates"] .msafcard--tpl:nth-child(2){animation-delay:40ms}
+.msnfs[data-nf="templates"] .msafcard--tpl:nth-child(3){animation-delay:80ms}
+.msnfs[data-nf="templates"] .msafcard--tpl:nth-child(4){animation-delay:120ms}
+.msnfs[data-nf="templates"] .msafcard--tpl:nth-child(5){animation-delay:160ms}
+.msnfs[data-nf="templates"] .msafcard--tpl:nth-child(6){animation-delay:200ms}
+.msnfs[data-nf="templates"] .msafcard--tpl:nth-child(7){animation-delay:240ms}
+.msnfs[data-nf="templates"] .msafcard--tpl:nth-child(8){animation-delay:280ms}
+.msnfs[data-nf="templates"] .msafcard--tpl:nth-child(n+9){animation-delay:280ms}
+@media (prefers-reduced-motion:reduce){.msnfs[data-nf="templates"] .msafcard--tpl:not(.hide){animation:none}}
+
+
+/* 01b-home-return — post-publish loop: package summary banner + Mel nudge toast.
+   Both live inside the workflows screen, so they vanish with it (display:none parent). */
+.msnfret{order:0;align-self:center;width:100%;max-width:920px;display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto auto auto;align-items:center;gap:14px;
+  padding:10px 12px;background:var(--white);border:1px solid var(--neutral-200);
+  border-radius:var(--r-card,14px);box-shadow:var(--shadow-sm)}
+.msnfret.gone{display:none}
+.msnfret-ph{width:40px;height:40px;flex:none;border-radius:10px;
+  background:url('../assets/prop/s1.jpg') center/cover no-repeat,linear-gradient(135deg,#B8C4D6,#6B7A94)}
+.msnfret-tx{min-width:0;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.msnfret-tx b{font:600 13.5px/1.2 var(--font);color:var(--neutral-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msnfret-tx i{font-style:normal;font:400 11.5px/1.2 var(--font);color:var(--neutral-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msnfret-stats{display:flex;align-items:center;gap:18px;min-width:0}
+.msnfret-stat{display:flex;align-items:baseline;gap:5px;min-width:0}
+.msnfret-stat b{font:600 14px/1 var(--font);font-variant-numeric:tabular-nums;color:var(--neutral-900)}
+.msnfret-stat span{font:400 11.5px/1 var(--font);color:var(--neutral-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msnfret-view{position:relative;flex:none;height:32px;padding:0 14px;border-radius:8px;border:1px solid #C9CAF8;
+  background:var(--white);color:var(--primary);font:600 12.5px/1 var(--font);cursor:pointer;
+  transition:box-shadow .14s ease,transform .14s cubic-bezier(.23,1,.32,1)}
+.msnfret-view::after{content:'';position:absolute;inset:-6px}
+.msnfret-view:hover{box-shadow:0 0 0 3px rgba(90,95,242,.1)}
+.msnfret-view:active{transform:scale(.98)}
+.msnfret-x{position:relative;flex:none;width:28px;height:28px;display:grid;place-items:center;border:0;border-radius:7px;
+  background:transparent;color:var(--neutral-400);cursor:pointer;transition:background .14s ease,color .14s ease}
+.msnfret-x::after{content:'';position:absolute;inset:-8px}
+.msnfret-x svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.msnfret-x:hover{background:var(--neutral-100);color:var(--neutral-700)}
+@media (max-width:900px){
+  .msnfret{grid-template-columns:auto minmax(0,1fr) auto;row-gap:10px}
+  .msnfret-stats{grid-column:1/-1;justify-content:space-between}
+}
+
+.msnftoast{position:fixed;right:22px;bottom:22px;z-index:60;width:344px;max-width:calc(100vw - 44px);
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;align-items:start;
+  padding:13px 14px;border:1px solid transparent;border-radius:14px;
+  background:linear-gradient(var(--white),var(--white)) padding-box,
+             var(--mel-gradient,linear-gradient(92deg,#7B7FF5,#5A5FF2,#F08068,#F0A468)) border-box;
+  box-shadow:0 18px 40px -18px rgba(10,10,10,.28);
+  opacity:1}
+.msnftoast.gone{display:none}
+@keyframes msnftoastin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.msnftoast{animation-duration:.01s}}
+.msnftoast-mark{width:20px;height:20px;flex:none;margin-top:1px}
+.msnftoast-body{min-width:0;display:flex;flex-direction:column;gap:10px}
+.msnftoast-body p{margin:0;font:400 12.5px/17px var(--font);color:var(--neutral-600);text-wrap:pretty}
+.msnftoast-body p b{font-weight:600;color:var(--neutral-900)}
+.msnftoast-acts{display:flex;align-items:center;gap:8px}
+.msnftoast-go{position:relative;height:32px;padding:0 13px;border:0;border-radius:8px;background:var(--primary);
+  color:#fff;font:600 12.5px/1 var(--font);cursor:pointer;transition:filter .14s ease,transform .14s cubic-bezier(.23,1,.32,1)}
+.msnftoast-go::after,.msnftoast-no::after{content:'';position:absolute;inset:-6px}
+.msnftoast-go:hover{filter:brightness(.94)}
+.msnftoast-go:active{transform:scale(.98)}
+.msnftoast-no{position:relative;height:32px;padding:0 11px;border:0;border-radius:8px;background:transparent;
+  color:var(--primary);font:500 12.5px/1 var(--font);cursor:pointer;transition:background .14s ease}
+.msnftoast-no:hover{background:#F3F3FE}
+
+
+/* ===== Studio home — 1:1 with the ui.html wireframe: photo block, title, sub, CTA;
+   continue-where-you-left-off rows; favorite template thumbs. Radius fidelity, wireframe layout. */
+.msnfphbase,.msnfhc-ph,.msnfrow-ph,.msnffav-ph{position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#d8dce6 0%,#b9c0cf 60%,#98a2b8 100%)}
+.msnfhc-ph.warm,.msnfrow-ph.warm,.msnffav-ph.warm{background:linear-gradient(135deg,#e8ddd0 0%,#cdbba4 60%,#a8977e 100%)}
+.msnfhc-ph.green,.msnfrow-ph.green,.msnffav-ph.green{background:linear-gradient(135deg,#d5e3d8 0%,#adc7b3 60%,#86a98e 100%)}
+.msnfhc-ph::after,.msnffav-ph::after{content:'';position:absolute;inset:auto 0 0 0;height:40%;background:linear-gradient(transparent,rgba(0,0,0,.25))}
+
+/* "Coming soon" strip (Newsletter + Agent self-promotion) is hidden per KJ — nothing to act on yet */
+.msnfsoonrow{display:none}
+/* "Continue where you left off" is a tweak (showContinue prop -> body.mel-nocontinue) */
+body.mel-nocontinue .msnfsec--continue{display:none}
+/* "Favorite templates" is a tweak too (showFavorites -> body.mel-nofav), default off */
+body.mel-nofav .msnfsec--fav{display:none}
+/* with BOTH rows hidden the home screen is just eyebrow + title + sub + two cards, so it centres
+   in the panel instead of hanging off the top. min-height:100% resolves because .msnf is flex:1
+   inside a column flex parent, i.e. it has a definite height. */
+body.mel-nocontinue.mel-nofav .msnfs[data-nf="workflows"].on{justify-content:center;min-height:100%;margin-top:0}
+.msnfhome{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.msnfhc{min-width:0;display:flex;flex-direction:column;gap:8px;padding:20px;text-align:left}
+.msnfhc--pri{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+.msnfhc--pri:hover{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary),0 4px 20px rgba(90,95,242,.14)}
+.msnfhc-ph{display:block;height:84px;flex:none;border-radius:8px}
+.msnfhc > b{font:600 15px/1.3 var(--font);color:var(--neutral-900)}
+.msnfhc > i{font-style:normal;font:400 13px/19px var(--font);color:var(--neutral-500);text-wrap:pretty}
+.msnfhc-foot{margin-top:auto;padding-top:6px;display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+.msnfhc-cta{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 16px;border-radius:8px;
+  background:var(--primary);color:#fff;font:600 13.5px/1 var(--font)}
+.msnfhc-cta svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.msnfhc-cta.ghost{background:var(--white);border:1px solid #C9CAF8;color:var(--primary)}
+.msnfhc:active .msnfhc-cta{transform:scale(.98)}
+.msnfhc-time{font:400 12px/1 var(--font);color:var(--neutral-500);white-space:nowrap}
+
+.msnfsec{grid-column:1/-1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.msnfsec-hd{display:flex;align-items:baseline;justify-content:space-between;gap:12px;min-width:0}
+.msnfsec-hd b{font:600 14px/1.2 var(--font);color:var(--neutral-900);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msnfsec-all{position:relative;flex:none;border:0;background:transparent;padding:4px 2px;color:var(--primary);
+  font:500 12px/1 var(--font);cursor:pointer;border-radius:6px}
+.msnfsec-all{min-height:28px}
+.msnfsec-all::after{content:'';position:absolute;inset:-8px 0}
+.msnfsec-all:hover{text-decoration:underline}
+.msnfsec-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.msnfrow{min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;
+  padding:10px;background:var(--white);border:1px solid var(--neutral-200);border-radius:10px;overflow:hidden}
+.msnfrow-ph{display:block;width:56px;height:44px;flex:none;border-radius:8px}
+.msnfrow-tx{min-width:0;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.msnfrow-tx b{font:500 13px/1.3 var(--font);color:var(--neutral-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msnfrow-tx i{font-style:normal;font:400 12px/1.3 var(--font);color:var(--neutral-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msnfrow-btn{position:relative;flex:none;height:32px;padding:0 12px;border-radius:8px;border:1px solid #C9CAF8;
+  background:var(--white);color:var(--primary);font:600 12.5px/1 var(--font);cursor:pointer;
+  transition:box-shadow .14s ease,transform .14s cubic-bezier(.23,1,.32,1)}
+.msnfrow-btn::after{content:'';position:absolute;inset:-7px}
+.msnfrow-btn.ghost{border-color:transparent;background:transparent}
+.msnfrow-btn:hover{box-shadow:0 0 0 3px rgba(90,95,242,.1)}
+.msnfrow-btn.ghost:hover{box-shadow:none;background:#F3F3FE}
+.msnfrow-btn:active{transform:scale(.98)}
+
+.msnffavs{display:flex;align-items:stretch;gap:14px;flex-wrap:wrap;min-width:0}
+.msnffav{position:relative;width:110px;padding:0;border:1px solid var(--neutral-200);border-radius:10px;
+  background:var(--white);cursor:pointer;overflow:hidden;
+  transition:box-shadow .14s ease,transform .14s cubic-bezier(.23,1,.32,1),border-color .14s ease}
+.msnffav-ph{display:block;width:100%;aspect-ratio:4/5}
+.msnffav:hover{border-color:#C9CAF8;box-shadow:0 4px 16px rgba(10,10,10,.12)}
+.msnffav:active{transform:scale(.98)}
+/* No star badge in the Favorite templates row: the section heading already says favorite, and
+   nobody un-favourites from here. The star lives only in the full gallery, where it toggles. */
+.msnffav-browse{width:110px;aspect-ratio:4/5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  border:1px dashed var(--neutral-300);border-radius:10px;background:var(--white);color:var(--neutral-500);
+  font:500 12.5px/1 var(--font);cursor:pointer;transition:border-color .14s ease,background .14s ease,color .14s ease}
+.msnffav-browse svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.msnffav-browse:hover{border-color:#C9CAF8;background:#FAFAFF;color:var(--primary)}
+.msnffav-browse:active{transform:scale(.98)}
+
+@media (max-width:900px){
+  .msnfhome,.msnfsec-rows{grid-template-columns:1fr}
+}
+
+/* beats the older .msnfs[data-nf="workflows"] .msnfcard{padding-right:14px} (higher specificity) */
+.msnfs[data-nf="workflows"] .msnfcard.msnfhc{padding:20px}
+.msnfs[data-nf="workflows"] .msnfgrid{max-width:920px}
+
+
+/* ===== KJ review: real template renders on the home cards + notices moved to a toast stack =====
+   .prev is authored at a fixed px scale, so every embedded copy sits in a clipped box and is
+   scaled with transform (never allowed to size its own track — see CLAUDE.md containment rules). */
+.msnfhc-banner{position:relative;display:block;height:180px;flex:none;border-radius:10px;overflow:hidden;
+  background:linear-gradient(160deg,#F3F4F8 0%,#ECEDF3 100%);border:1px solid var(--neutral-200)}
+.msnfshot{position:absolute;top:0;left:0;width:240px;height:240px;transform-origin:top left;
+  border-radius:12px;overflow:hidden;box-shadow:0 8px 22px -10px rgba(10,10,10,.4)}
+/* package banner: every format the package ships, each real template render cropped to its own
+   aspect and drifting slowly. Resting state = drift start, so a frozen timeline still looks right. */
+/* Mockup-sheet plane: ONE angle, a REGULAR 5×3 grid of same-size cards, brick-offset on alternate
+   columns, bleeding off all four edges. No overlaps, no voids, no ragged fan.
+   Arithmetic: banner = (920 grid − 14 gap)/2 − 40 card padding = 413 wide; caption bar 27 →
+   stage 413×153. rotate(-9deg) needs 413·cos9 + 153·sin9 = 432 wide and 413·sin9 + 153·cos9 = 216
+   tall to cover it. Plane = 5·84 + 4·9 = 456 wide × 3·112 + 2·9 = 354 tall → 12px horizontal and
+   69px vertical slack each side, so the 40px column offset still never exposes the background. */
+.msnfstrip{position:absolute;inset:0 0 27px 0;display:block;padding:0;overflow:hidden}
+/* geometry (display, tracks, angle, scale) lives in ONE place: the sheet block near the end of
+   this file. Here: position and the transition only. */
+.msnfstriprow{position:absolute;top:50%;left:50%;transform-origin:50% 50%;
+  transition:transform .26s cubic-bezier(.23,1,.32,1)}
+.msnfhc:hover .msnfstriprow{transform:translate(-50%,-50%) rotate(-20deg) scale(1.4)}
+/* format names sit INSIDE the banner, on the light surface. NO scrim: a black gradient here has
+   nothing to sit on (the banner is a flat neutral, not a photo) and it dimmed the tiles it labels. */
+/* the collage now bleeds to the frame, so the format line gets its own solid caption bar —
+   a label floating over cropped renders was unreadable. Flat white fill, 1px top rule. */
+.msnfformats{position:absolute;left:0;right:0;bottom:0;z-index:9;padding:6px 12px;
+  background:var(--white);border-top:1px solid var(--neutral-200);
+  font:500 11px/15px var(--font);letter-spacing:.01em;color:var(--neutral-600);text-align:center;pointer-events:none;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+/* All seven fit the 300px band at rest — nothing needs motion to become visible. The float below
+   is decoration only: its resting frame IS the layout, so a stopped clock changes nothing. */
+@keyframes msnffloat{0%,100%{transform:translateY(var(--y,0px))}50%{transform:translateY(calc(var(--y,0px) - 4px))}}
+@media (prefers-reduced-motion:no-preference){
+  .msnfmini{animation:msnffloat 5.2s ease-in-out infinite;animation-delay:calc(var(--i,0) * .38s)}
+  .msnfhc:hover .msnfmini{animation-play-state:paused}
+}
+/* one cell each, never overlapping — the grid owns position and the gap is uniform */
+.msnfmini{position:relative;display:block;min-width:0;overflow:hidden;border-radius:8px;background:#0a0a0a;
+  transform:translateY(var(--y,0px));
+  box-shadow:0 8px 20px -10px rgba(10,10,10,.45),0 0 0 1px rgba(255,255,255,.55);
+  transition:transform .2s cubic-bezier(.23,1,.32,1)}
+/* the grid cell sizes every card (see the sheet block at the end of this file), so the per-format
+   width/height rules below only apply where a tile is used outside the sheet. */
+.msnfmini > .prev{position:absolute;top:50%;left:50%;width:240px;height:240px;aspect-ratio:auto;border-radius:0;
+  transform:translate(-50%,-50%) scale(var(--s))}
+.msnfhc:hover .msnfmini{transform:translateY(calc(var(--y,0px) - 4px))}
+/* Each format tile is a BESPOKE render at its own true aspect, carrying the chrome that actually
+   identifies the format — a post has an avatar row and like/comment/share, an email has a subject
+   line and an unsubscribe footer, a website has browser chrome and a thumb strip.
+   BUG THAT SHIPPED ONCE: `.msnfmini.fm{height:auto}` is (0,2,0) and beat `.fm-post{height:104px}`
+   (0,1,0), so every tile collapsed to its text and the post read as "a random card with money".
+   Never put width/height on the two-class selector — the per-format rules own the box.
+   Arithmetic: widths 100+128+58+84+58+84+80 = 592; overlaps 52+67+30+44+30+44 = 267 -> 325 wide,
+   +~10 rotation = 335, inside the ~338 the strip has. Band 136 tall; tallest tile 104 + 8 = 112. */
+.msnfmini.fm{background:#FFFFFF;display:flex;flex-direction:column;text-align:left;border-radius:7px;overflow:hidden}
+.fm .fmimg{position:relative;display:block;flex:1 1 auto;min-height:0;background-size:cover;background-position:50% 45%;background-color:#DDE1E8}
+.fm .fmshade{position:absolute;inset:auto 0 0 0;height:62%;background:linear-gradient(to top,rgba(10,10,10,.82),rgba(10,10,10,0))}
+.fm .fmover{position:absolute;left:6px;right:6px;bottom:5px;display:flex;flex-direction:column;gap:1px}
+.fm .fmover b{font:700 7px/1.15 var(--font);color:#FFFFFF;letter-spacing:-.01em}
+.fm .fmover i{font:500 5.5px/1.15 var(--font);font-style:normal;color:rgba(255,255,255,.82)}
+.fm .fmbar,.fm .fmbody{flex:none;display:flex;flex-direction:column;gap:1px;padding:4px 6px 5px;background:#FFFFFF}
+.fm .fmbar b,.fm .fmbody b{font:700 7px/1.15 var(--font);color:#0A0A0A;letter-spacing:-.01em}
+.fm .fmbar i,.fm .fmbody i{font:500 5.5px/1.2 var(--font);font-style:normal;color:#737373}
+.fm .fmav{flex:none;width:9px;height:9px;border-radius:999px;background-size:cover;background-position:50%;background-color:#E5E5E5}
+
+/* POST — feed chrome: avatar + handle, square photo, like/comment/share, caption */
+.fm-post{width:100px;height:104px}
+.fm-post .fmtop{flex:none;display:flex;align-items:center;gap:4px;padding:4px 6px;background:#FFFFFF}
+.fm-post .fmtop b{font:600 6px/1 var(--font);color:#0A0A0A}
+.fm-post .fmimg{flex:1 1 auto}
+.fm-post .fmacts{flex:none;display:flex;align-items:center;gap:5px;padding:4px 6px 0;background:#FFFFFF}
+.fm-post .fmacts svg{width:8px;height:8px;fill:none;stroke:#0A0A0A;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fm-post .fmbar{padding-top:2px}
+
+/* WEBSITE — browser chrome, dark nav, hero, gallery strip */
+.fm-site{width:128px;height:80px;background:#0A0A0A}
+.fm-site .fmchrome{flex:none;display:flex;align-items:center;gap:2px;height:9px;padding:0 5px;background:#E8E9ED}
+.fm-site .fmchrome > i{width:3px;height:3px;border-radius:999px;background:#B9BCC5}
+.fm-site .fmurl{margin-left:4px;font:500 4.5px/1 var(--font);color:#8A8D96;letter-spacing:.01em}
+.fm-site .fmnav{flex:none;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 6px;height:12px;background:#0A0A0A}
+.fm-site .fmnav b{font:700 6px/1 var(--font);color:#FFFFFF;letter-spacing:.02em}
+.fm-site .fmnav i{font:500 5px/1 var(--font);font-style:normal;color:rgba(255,255,255,.6)}
+.fm-site .fmover b{font-size:8px}
+.fm-site .fmthumbs{flex:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;padding:2px;background:#0A0A0A}
+.fm-site .fmthumbs > i{height:11px;min-width:0;border-radius:2px;background-size:cover;background-position:50%;background-color:#2A2A31}
+
+/* STORY — full bleed with progress segments */
+.fm-story{width:58px;height:104px}
+.fm-story .fmimg{flex:1 1 100%}
+.fm .fmbars{position:absolute;top:4px;left:4px;right:4px;display:flex;gap:2px;z-index:2}
+.fm .fmbars > i{flex:1;height:1.5px;border-radius:999px;background:rgba(255,255,255,.38)}
+.fm .fmbars > i.on{background:#FFFFFF}
+.fm .fmkick{position:absolute;top:11px;left:5px;padding:2px 5px;border-radius:999px;background:rgba(255,255,255,.94);
+  font:700 5px/1 var(--font);letter-spacing:.05em;text-transform:uppercase;color:#0A0A0A;z-index:2}
+
+/* EMAIL — subject line, brand header, hero, body, CTA, unsubscribe footer */
+.fm-email{width:84px;height:104px}
+.fm-email .fmsubj{flex:none;height:11px;display:flex;align-items:center;padding:0 6px;background:#F5F5F5;border-bottom:1px solid #E5E5E5;
+  font:500 4.5px/1 var(--font);color:#737373;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fm-email .fmhdr{flex:none;height:12px;display:flex;align-items:center;padding:0 6px;background:var(--primary);
+  font:700 5.5px/1 var(--font);letter-spacing:.04em;color:#FFFFFF}
+.fm-email .fmimg{flex:0 0 30px}
+.fm-email .fmcta{flex:none;margin:0 6px;height:12px;display:flex;align-items:center;justify-content:center;
+  border-radius:4px;background:var(--primary);font:600 5.5px/1 var(--font);color:#FFFFFF}
+.fm-email .fmfoot{flex:none;padding:4px 6px 5px;font:500 4px/1.2 var(--font);color:#A3A3A3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* REEL — full bleed, play button, right action rail */
+.fm-reel{width:58px;height:104px}
+.fm-reel .fmimg{flex:1 1 100%}
+.fm .fmplay{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px;
+  display:grid;place-items:center;border-radius:999px;background:rgba(255,255,255,.9);z-index:2}
+.fm .fmplay svg{width:9px;height:9px;fill:#0A0A0A}
+.fm .fmrail{position:absolute;right:4px;bottom:26px;display:flex;flex-direction:column;gap:5px;z-index:2}
+.fm .fmrail > i{width:7px;height:7px;border-radius:999px;background:rgba(255,255,255,.85)}
+
+/* NEWSLETTER — masthead, issue line, photo, lede, stat row */
+.fm-news{width:84px;height:104px}
+.fm-news .fmmast{flex:none;padding:5px 6px 0;font:700 7.5px/1 var(--font);letter-spacing:-.02em;color:#0A0A0A}
+.fm-news .fmdate{flex:none;padding:2px 6px 4px;margin-bottom:3px;border-bottom:1px solid #E5E5E5;
+  font:500 4.5px/1 var(--font);letter-spacing:.05em;text-transform:uppercase;color:#A3A3A3}
+.fm-news .fmimg{flex:0 0 28px;margin:0 6px;border-radius:2px}
+.fm-news .fmstats{flex:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;padding:0 6px 5px}
+.fm-news .fmstats > i{min-width:0;display:flex;flex-direction:column;font:500 4px/1.2 var(--font);font-style:normal;color:#A3A3A3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fm-news .fmstats > i b{font:700 6px/1.1 var(--font);color:var(--primary);font-variant-numeric:tabular-nums}
+
+/* FLYER — cream stock, eyebrow, inset photo, agent sign-off */
+.fm-flyer{width:80px;height:104px;background:#F6F1E9}
+.fm-flyer .fmkick2{flex:none;padding:6px 6px 4px;font:700 5.5px/1 var(--font);letter-spacing:.09em;
+  text-transform:uppercase;color:#8A6D3B}
+.fm-flyer .fmimg{flex:1 1 auto;margin:0 6px;border-radius:2px}
+.fm-flyer .fmbody{background:#F6F1E9;padding:5px 6px 3px}
+.fm-flyer .fmbody i{color:#8A6D3B}
+.fm-flyer .fmsign{flex:none;display:flex;align-items:center;gap:4px;margin:0 6px;padding:4px 0 5px;border-top:1px solid #E2D8C8}
+.fm-flyer .fmsign i{font:500 4.5px/1 var(--font);font-style:normal;color:#8A6D3B;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Overlap = 36% of the incoming tile's width, so every format keeps ~64% of itself visible and is
+   identifiable on its own (post feed chrome, site browser bar, story bars, email subject, reel play,
+   newsletter masthead, flyer eyebrow). Advances: 100+82+37+54+37+54+51 = 415 in a 413 stage —
+   ~7px bleed each side after rotation, which is the crop the reference sheet has. */
+/* nth-child advances deleted with the fan: they were negative left margins (0,3,0) that beat the
+   sheet's margin reset (0,2,0) and pulled six cards out of their cell — the overlap that kept
+   coming back. The grid owns position now; nothing here may set a margin. */
+.fm-post{--i:0}
+.fm-site{--i:1}
+.fm-story{--i:2}
+.fm-email{--i:3}
+.fm-reel{--i:4}
+.fm-news{--i:5}
+.fm-flyer{--i:6}
+.msnfshot > .prev{width:240px;height:240px;aspect-ratio:auto;border-radius:12px}
+.msnfshot--a{transform:translate(10px,16px) rotate(-4deg) scale(.56);z-index:3}
+.msnfshot--b{transform:translate(112px,10px) rotate(0deg) scale(.56);z-index:2}
+.msnfshot--c{transform:translate(214px,16px) rotate(4deg) scale(.56);z-index:1}
+.msnfhc:hover .msnfshot--a{transform:translate(6px,12px) rotate(-6deg) scale(.58)}
+.msnfhc:hover .msnfshot--c{transform:translate(218px,12px) rotate(6deg) scale(.58)}
+.msnfshot{transition:transform .22s cubic-bezier(.23,1,.32,1)}
+.msnfhc-banner--site{background:linear-gradient(160deg,#14141A 0%,#0A0A0A 100%)}
+/* same banner height as the package card (260) — the site render is inset:0 so the extra height
+   simply reveals more of the photo instead of leaving dead space under the copy. */
+.msnfhc-banner--site{height:260px}
+/* the whole 240px square scaled to the 132px band height, centred: navbar, hero title and sub all read */
+.msnfshot--site{top:0;left:50%;transform:translateX(-50%) scale(.75);transform-origin:top center;
+  box-shadow:0 10px 26px -12px rgba(0,0,0,.55)}
+.msnfhc:hover .msnfshot--site{transform:translateX(-50%) scale(.77)}
+/* the site render fills the whole banner — no letterboxing either side */
+.msnfshot--site{top:0;left:0;width:100%;height:100%;transform:none;border-radius:0;box-shadow:none}
+.msnfhc:hover .msnfshot--site{transform:none}
+.msnfshot--site > .prev{position:absolute;inset:0;width:100%;height:100%;border-radius:0;transform:none}
+.msnfshot--site .navbar{font-size:8px}
+.msnfshot--site .hero-title{font-size:23px}
+.msnfshot--site .hero-sub{font-size:9.5px}
+.msnfshot--site > .prev > .ph{transition:transform .3s cubic-bezier(.23,1,.32,1)}
+.msnfhc:hover .msnfshot--site > .prev > .ph{transform:scale(1.03)}
+@media (prefers-reduced-motion:reduce){.msnfshot{transition:none}}
+
+/* ===== mockup SHEET (the reference) — a tight mosaic, not scattered cards =====
+   What the reference actually does, and what this reproduces:
+   (1) ONE steep angle for the whole sheet (-20deg), carried by the plane;
+   (2) uniform card WIDTH and HEIGHT in a fixed grid — 15 cells, 15 tiles, so nothing can run out
+       and leave a hole (the earlier multicol pass could, and did);
+   (3) narrow even gutters (6px local) — a mosaic with no background showing through;
+   (4) the sheet is far bigger than the frame and cropped on all four sides.
+   Calibrated off the reference: each card there is ~29% of the frame's width and ~90% of its
+   height, i.e. ~3.5 columns visible. On a 413×233 stage that is a 120px-wide card → 88 local × 1.36.
+   At 1.36 the sheet runs FIVE columns of THREE (5×88 + 4×6 = 464 local wide), and the 7 formats are
+   laid down twice plus one, like a real mockup sheet — arithmetic in the sheet block below. */
+/* THE SHEET — single source of truth for the collage geometry.
+   Multicol was wrong: `column-fill:balance` with unequal card heights leaves ragged column ends,
+   which is exactly the empty space that kept shipping. A fixed grid cannot leave a hole.
+   Every cell is the SAME phone-portrait box (88×156 local = 9:16, like the reference sheet), the
+   gutter is the same 6px in both axes, and every one of the 15 cells is filled by markup.
+   Arithmetic: stage = 386 wide × 231 tall (banner 388×260 − 27 caption bar). At scale 1.36 that is
+   284×170 local; rotated 20° it needs 284·cos20 + 170·sin20 = 325 local wide and
+   284·sin20 + 170·cos20 = 257 local tall. Grid = 5·88 + 4·6 = 464 wide × 3·156 + 2·6 = 480 tall
+   → 70px of horizontal and 112px of vertical overhang on every side, all of it cropped.
+   Cards render 120×212 (measured bbox 185×240 axis-aligned); 7px headline type → 9.5px. */
+.msnfhc-banner--pkg,.msnfhc-banner:has(.msnfstrip){height:260px}
+/* PACKAGE CARD ART — one flat render of the eight package formats, replacing the CSS-drawn
+   collage sheet. Sits in the same box the strip had (inset above the caption bar) and bleeds to
+   the frame; `cover` so it never letterboxes at any card width. Hover lifts it 4%. */
+.msnfhcimg{position:absolute;inset:0 0 27px 0;display:block;
+  background-repeat:no-repeat;background-position:50% 50%;background-size:cover;
+  transform-origin:50% 50%;transition:transform .26s cubic-bezier(.23,1,.32,1)}
+.msnfhc:hover .msnfhcimg{transform:scale(1.04)}
+/* video is the primary art; the .msnfhcimg layer under it and the poster (same JPG) are what shows
+   while the file loads or if it fails, so there is never an empty frame. pointer-events:none — the
+   whole banner sits inside a <button>. */
+.msnfhcvid{position:absolute;left:0;top:0;right:0;bottom:27px;display:block;
+  width:100%;height:calc(100% - 27px);object-fit:cover;border:0;background:transparent;
+  pointer-events:none;transform-origin:50% 50%;transition:transform .26s cubic-bezier(.23,1,.32,1)}
+.msnfhc:hover .msnfhcvid{transform:scale(1.04)}
+.msnfstriprow{display:grid;grid-template-columns:repeat(5,88px);grid-template-rows:repeat(3,156px);
+  grid-auto-flow:column;gap:6px;
+  transform:translate(-50%,-50%) rotate(-20deg) scale(1.36)}
+.msnfhc:hover .msnfstriprow{transform:translate(-50%,-50%) rotate(-20deg) scale(1.4)}
+/* the grid cell owns the box — no per-format width/height, no negative margins, no overlap */
+.msnfstriprow > .msnfmini:nth-child(n){width:auto;height:auto;margin:0;
+  box-shadow:0 3px 8px -4px rgba(10,10,10,.34),0 0 0 .5px rgba(255,255,255,.65)}
+.msnfstriprow > .msnfmini.fm{display:flex;width:auto;height:auto}
+/* WHITE-SPACE BUG (shipped twice): every child of a format tile is `flex:none` and two formats pin
+   their photo (`.fm-email .fmimg{flex:0 0 30px}`, `.fm-news{28px}`), so in a fixed 156px cell
+   nothing grew and the leftover height rendered as a white block INSIDE the card — read as a hole
+   in the sheet. In the sheet the photo is always the growing element, so every card fills its cell. */
+.msnfstriprow > .msnfmini.fm .fmimg{flex:1 1 auto;min-height:0}
+/* no per-tile float at this scale: 4px of drift becomes 8px and breaks the mosaic seams */
+.msnfstriprow > .msnfmini{animation:none;--y:0px}
+.msnfhc:hover .msnfstriprow > .msnfmini{transform:none}
+
+.msnffav-shot{position:absolute;inset:0;display:block;overflow:hidden;border-radius:9px;background:var(--neutral-100)}
+/* square tile + scale 130/240 so the whole 240x240 render fits — the 4/5 tile was cropping the
+   price line and the "Just listed" kicker off both edges. 4x130 + 3x14 gap = 562 in a 622 row. */
+.msnffav-shot > .prev{position:absolute;top:0;left:50%;width:240px;height:240px;aspect-ratio:auto;border-radius:0;
+  transform:translateX(-50%) scale(.5417);transform-origin:top center}
+.msnffav{width:130px}
+.msnffav-ph,.msnffav-browse{aspect-ratio:1/1}
+.msnffav-browse{width:130px}
+.msnffav{overflow:hidden}
+
+/* notices: one fixed stack, bottom-right. It is mounted on .melpage, NOT inside .msnfs —
+   .msnfs.on carries a transform entrance, and a transformed ancestor becomes the containing
+   block for position:fixed, which pushed the whole stack off-screen. Never nest it back. */
+.msnftoasts{position:fixed;right:22px;bottom:22px;z-index:60;display:none;flex-direction:column;align-items:flex-end;gap:10px;
+  width:344px;max-width:calc(100vw - 44px);pointer-events:none}
+.melpage.studio:has(.msnfs[data-nf="workflows"].on) .msnftoasts{display:flex}
+.msnftoasts > *{pointer-events:auto}
+.msnftoast{position:static;right:auto;bottom:auto;width:100%}
+.msnfret{position:static;order:0;align-self:stretch;width:100%;max-width:none;
+  grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:'ph tx x' 'stats stats stats' 'view view view';
+  gap:10px 10px;padding:13px 14px;border-radius:14px;box-shadow:0 18px 40px -18px rgba(10,10,10,.28);
+  opacity:1}
+.msnfret-ph{grid-area:ph}
+.msnfret-tx{grid-area:tx}
+.msnfret-x{grid-area:x;align-self:start}
+.msnfret-stats{grid-area:stats;justify-content:space-between;gap:10px;
+  padding-top:10px;border-top:1px solid var(--neutral-100)}
+.msnfret-stat{flex-direction:column;align-items:flex-start;gap:1px}
+.msnfret-stat span{font-size:11px}
+.msnfret-view{grid-area:view;justify-self:stretch;width:100%;text-align:center}
+@media (prefers-reduced-motion:reduce){.msnfret{animation-duration:.01s}}
+
+
+/* ============ V2 listing screen (listingLayout tweak) ============
+   V1 = hero + centred ask bar (what shipped before this tweak).
+   V2 = "New listing package" header + 4 step chips, SAME cards, SAME floating
+   ask bar; the branding rail is revealed by "Create template" (mel/32).
+   Both shells live in the one .msnfs[data-nf="address"] section — body.msafv2
+   picks which chrome shows, body.msafv2-rail-on opens the rail.
+   Rail arithmetic: page 1330 - 24 left pad - 324 rail (300 + 24) = 982 content
+   / 3 cols - 28 gap = 318px per card. Nothing spills. */
+body.msafv2{--msafv2-hd:73px}                      /* 16 + 40 + 16 + 1px border */
+.msafv2-top{display:none}
+body.msafv2 .msaf-top,body.msafv2 .msaf-hero{display:none}
+body.msafv2 .msafv2-top{display:flex;align-items:center;gap:16px;flex:none;box-sizing:border-box;padding:16px 24px;min-height:73px;border-bottom:1px solid var(--border);background:var(--background)}
+/* V1 had a hero above the format tabs; V2 has a bordered header, so the tab row needs air under
+   the rule — and its 20px gutter was 4px off the 24px header/scroll gutter. */
+body.msafv2 .msaf-tabs{margin:16px 24px 12px}
+.msafv2-title{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:var(--font-weight-semibold) 20px/1.2 var(--font-sans);letter-spacing:-.01em;color:var(--foreground)}
+.msafv2-steps{margin:0 0 0 auto;padding:0;list-style:none;display:flex;align-items:center;gap:8px;flex:none}
+/* Steps are plain text, not controls: no pill, no button. State is carried by weight and
+   colour tokens only; the rule between them is the Radius UI separator. */
+.msafv2-step{display:inline-flex;align-items:center;gap:6px;font:var(--font-weight-medium) 13px/1 var(--font-sans);color:var(--muted-foreground);white-space:nowrap}
+.msafv2-step .n{font-variant-numeric:tabular-nums}
+.msafv2-step .sep{opacity:.55}
+.msafv2-step.is-on{color:var(--primary);font-weight:var(--font-weight-semibold)}
+/* completed steps read as settled, not active — foreground text, tick in place of the numeral */
+.msafv2-step.is-done{color:var(--foreground)}
+.msafv2-step.is-done .n,.msafv2-step.is-done .sep,.msafv2-step.is-done .t{display:none}
+.msafv2-step .tick{display:none;width:14px;height:14px;flex:none;color:var(--tint-green-fg)}
+.msafv2-step.is-done .tick{display:block}
+.msafv2-steprule{width:18px;flex:none}
+@media (max-width:1080px){.msafv2-steprule{width:10px}}
+.msafv2-steps>li{display:inline-flex;align-items:center}
+
+/* branding rail — revealed by Create template */
+.msafv2-rail{display:none}
+body.msafv2.msafv2-rail-on .msafv2-rail{display:flex;flex-direction:column;gap:12px;position:absolute;top:var(--msafv2-hd,73px);right:0;bottom:0;width:300px;box-sizing:border-box;padding:20px;border-left:1px solid var(--border);background:var(--background);z-index:6;overflow-y:auto;overscroll-behavior:contain;box-shadow:-18px 0 40px -28px rgba(10,10,10,.28)}
+/* The button does not stay - it becomes the panel, so it is gone while the panel is up. */
+body.msafv2.msafv2-rail-on .msaf-ctabtn{opacity:0;pointer-events:none}
+body.msafv2.msafv2-rail-on .msaf-scroll{padding-right:324px}
+body.msafv2.msafv2-rail-on .msaf-searchwrap{padding-right:324px}
+body.msafv2.msafv2-rail-on .msaf-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1180px){body.msafv2.msafv2-rail-on .msaf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.msafv2-railhd{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.msafv2-railtitle{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:var(--font-weight-semibold) 14px/1.2 var(--font-sans);color:var(--foreground)}
+.msafv2-railx{width:28px;height:28px;flex:none;display:inline-flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:8px;background:transparent;color:var(--primary);cursor:pointer}
+.msafv2-railx:hover{background:var(--neutral-100)}
+.msafv2-railx:active{transform:scale(.96)}
+.msafv2-railx svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.msafv2-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:104px;box-sizing:border-box;padding:12px;border:1px dashed var(--neutral-300);border-radius:12px;background:var(--background);cursor:pointer;color:var(--primary);font:500 13px/1.4 var(--font-sans);text-align:center;transition:border-color .16s ease,background .16s ease}
+.msafv2-drop:hover{border-color:#C9CAF8;background:#FAFAFE}
+.msafv2-drop:active{transform:scale(.99)}
+.msafv2-drop svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.msafv2-melbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;height:40px;box-sizing:border-box;padding:0 14px;border:1px solid var(--border);border-radius:10px;background:var(--background);box-shadow:var(--shadow-xs);cursor:pointer;color:var(--primary);font:var(--font-weight-semibold) 13.5px/1 var(--font-sans);transition:border-color .16s ease,box-shadow .16s ease}
+.msafv2-melbtn:hover{border-color:#C9CAF8;box-shadow:0 2px 12px rgba(90,95,242,.16)}
+.msafv2-melbtn:active{transform:scale(.98)}
+.msafv2-melbtn svg{width:15px;height:15px;flex:none;fill:currentColor}
+.msafv2-extract{margin-top:4px;min-width:0}
+.msafv2-extlab{display:block;font:400 12px/1.4 var(--font-sans);color:var(--muted-foreground)}
+/* 259px inner: swatches 3x28 + 4 gaps x8 = 116, Edit 40 -> 103px for the font label.
+   It wraps to two lines rather than clipping (nowrap ellipsised it at every width). */
+.msafv2-extrow{display:grid;grid-template-columns:auto auto auto minmax(0,1fr) auto;align-items:center;gap:8px;margin-top:10px;min-width:0}
+.msafv2-sw{width:28px;height:28px;flex:none;border-radius:8px;border:1px solid rgba(10,10,10,.08)}
+.msafv2-extfont{min-width:0;font:400 12px/1.35 var(--font-sans);color:var(--muted-foreground);text-wrap:pretty}
+.msafv2-extedit{height:28px;padding:0 8px;flex:none;border:0;border-radius:8px;background:transparent;color:var(--primary);font:var(--font-weight-semibold) 12.5px var(--font-sans);cursor:pointer}
+.msafv2-extedit:hover{background:var(--neutral-100)}
+
+
+/* ============ Listings picker zero-state (listingsEmpty tweak) ============
+   Radius UI Empty (.rds-empty) only. Hidden unless body.msaf-nolistings is set,
+   in which case the card grid and its "Your listings" label step aside. */
+.msaf-empty{display:none}
+body.msaf-nolistings .msaf-grid,
+body.msaf-nolistings .msaf-sec > .msaf-sechd{display:none}
+body.msaf-nolistings .msaf-empty{display:flex;min-width:0;padding:56px 24px 40px}
+.msaf-empty .rds-empty__title{font-family:var(--font-sans)}
+.msaf-emptyact{display:flex;gap:8px;margin-top:16px}

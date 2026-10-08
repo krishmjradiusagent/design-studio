@@ -1,0 +1,202 @@
+/* ---------- 38 · Group actions on the templates page ----------
+   Loads after 34 (action-bar button skins) and 36 (preview overlay) so it can extend both.
+   Owns three things:
+     1. the extra buttons in the floating action bar (Publish / Download / Share / Clear)
+     2. the Group publish sheet  (.mga)      — social tabs
+     3. the Download + Send sheets (.mga)    — flyers, cards, signs
+   Radius UI: white card, 1px #E5E5E5, radius 14, shadow-lg, 24 padding, scrim rgba(10,10,10,.5).
+   Every grid inside uses minmax(0,1fr) + min-width:0 children — see CLAUDE.md containment rule. */
+
+/* ---- action bar additions ---- */
+.msaf-selclear{appearance:none;border:0;background:transparent;padding:0 8px;height:24px;
+  border-radius:6px;color:#5A5FF2;font:600 12px/1 var(--font);cursor:pointer;flex:none}
+.msaf-selclear:hover{background:rgba(90,95,242,.08)}
+.msaf-selclear:active{transform:scale(.98)}
+.msaf-selclear[hidden]{display:none !important}
+.msaf-actionbtn[hidden]{display:none !important}
+.msaf-actionbtn .ph{font-size:16px;line-height:1}
+.msaf-actionbtn.solid .msaf-actionico .ph{color:#fff}
+
+/* Nothing selected = nothing to publish / download / send / continue with.
+   Filled indigo goes flat and pale; the label stays #FFFFFF, never neutral. */
+.msaf-actionbtn.solid:disabled{background:#C5C7F7;color:#fff;cursor:not-allowed;transform:none}
+.msaf-actionbtn.solid:disabled:hover{background:#C5C7F7}
+.msaf-actionbtn.solid:disabled:active{transform:none}
+.msaf-actionbtn.solid:disabled .msaf-actionico,
+.msaf-actionbtn.solid:disabled .msaf-actioncnt{background:rgba(255,255,255,.22);color:#fff}
+
+/* ---- sheet shell ---- */
+.mga{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:rgba(10,10,10,.5);animation:mga-fade .16s ease}
+@keyframes mga-fade{from{opacity:0}to{opacity:1}}
+.mga-card{position:relative;display:flex;flex-direction:column;width:min(720px,100%);
+  max-height:min(86vh,760px);background:var(--white,#fff);border:1px solid var(--neutral-200,#E5E5E5);
+  border-radius:14px;box-shadow:0 24px 56px -18px rgba(10,10,10,.38),0 2px 6px rgba(10,10,10,.06);
+  overflow:hidden;animation:mga-rise .2s cubic-bezier(.23,1,.32,1)}
+@keyframes mga-rise{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
+.mga-hd{display:flex;align-items:flex-start;gap:12px;padding:20px 24px 16px;border-bottom:1px solid var(--neutral-200,#E5E5E5)}
+.mga-hdtx{flex:1 1 auto;min-width:0}
+.mga-hdtx h2{margin:0;font:600 17px/22px var(--font);color:var(--neutral-900,#0A0A0A);letter-spacing:-.01em}
+.mga-hdtx p{margin:3px 0 0;font:400 13px/18px var(--font);color:var(--neutral-500,#737373)}
+.mga-x{appearance:none;flex:none;width:32px;height:32px;border-radius:10px;border:1px solid var(--neutral-200,#E5E5E5);
+  background:var(--white,#fff);color:#5A5FF2;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.mga-x:hover{background:var(--neutral-50,#FAFAFA)}
+.mga-x:active{transform:scale(.98)}
+.mga-x .ph{font-size:16px}
+.mga-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:20px 24px 8px}
+.mga-ft{flex:none;display:flex;align-items:center;gap:10px;padding:16px 24px;
+  border-top:1px solid var(--neutral-200,#E5E5E5);background:var(--neutral-50,#FAFAFA)}
+.mga-ftnote{flex:1 1 auto;min-width:0;font:400 12px/16px var(--font);color:var(--neutral-500,#737373)}
+
+/* ---- sections ---- */
+.mga-sec{padding-bottom:20px}
+.mga-sec + .mga-sec{border-top:1px solid var(--neutral-200,#E5E5E5);padding-top:18px}
+.mga-lb{display:block;margin:0 0 10px;font:600 12px/16px var(--font);color:var(--neutral-900,#0A0A0A)}
+.mga-lb em{font-style:normal;font-weight:400;color:var(--neutral-500,#737373)}
+
+/* ---- platform picker ---- */
+.mga-plats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mga-plat{position:relative;display:flex;flex-direction:column;gap:6px;min-width:0;overflow:hidden;
+  padding:12px;border:1px solid var(--neutral-200,#E5E5E5);border-radius:10px;background:var(--white,#fff);
+  cursor:pointer;text-align:left;transition:border-color .14s ease,box-shadow .14s ease,background .14s ease}
+.mga-plat:hover{border-color:var(--neutral-300,#D4D4D4);background:var(--neutral-50,#FAFAFA)}
+.mga-plat.on{border-color:#5A5FF2;background:rgba(90,95,242,.05);box-shadow:0 0 0 1px #5A5FF2 inset}
+.mga-plat .ico{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+  background:var(--neutral-100,#F5F5F5);color:var(--neutral-700,#404040)}
+.mga-plat.on .ico{background:rgba(90,95,242,.12);color:#5A5FF2}
+.mga-plat .ico .ph{font-size:17px}
+.mga-plat b{font:600 13px/17px var(--font);color:var(--neutral-900,#0A0A0A);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Scoped to the DIRECT child: this rule used to match <i class="ph ph-check"> inside .tick too,
+   overriding the Phosphor font-family (so the glyph rendered as garbage) and its white colour
+   (so the tick came out grey on indigo). */
+.mga-plat > i{font-style:normal;font:400 11.5px/15px var(--font);color:var(--neutral-500,#737373);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mga-plat .tick{position:absolute;top:10px;right:10px;width:16px;height:16px;border-radius:5px;
+  border:1px solid var(--neutral-300,#D4D4D4);background:var(--white,#fff);display:inline-flex;
+  align-items:center;justify-content:center;color:#fff}
+.mga-plat .tick .ph{font-size:11px;line-height:1;color:#fff;opacity:0}
+.mga-plat.on .tick{background:#5A5FF2;border-color:#5A5FF2}
+.mga-plat.on .tick .ph{opacity:1}
+
+/* Not-connected state: the card is a Connect target, not a checkbox. Muted so it reads as
+   unavailable, but never disabled — connecting is the whole point of showing it. */
+.mga-plat.off{background:var(--neutral-50,#FAFAFA)}
+.mga-plat.off .ico{background:var(--white,#fff);border:1px solid var(--neutral-200,#E5E5E5);color:var(--neutral-400,#A3A3A3)}
+.mga-plat.off b{color:var(--neutral-700,#404040)}
+.mga-conn{position:absolute;top:8px;right:8px;height:22px;padding:0 9px;display:inline-flex;align-items:center;
+  border:1px solid var(--primary,#5A5FF2);border-radius:8px;background:var(--white,#fff);
+  color:var(--primary,#5A5FF2);font:600 11px/1 var(--font);white-space:nowrap}
+.mga-plat.off:hover .mga-conn{background:var(--primary,#5A5FF2);color:#fff}
+.mga-plat.busy{pointer-events:none}
+.mga-plat.busy .mga-conn{padding-left:22px;color:var(--muted-foreground,#737373);border-color:var(--neutral-200,#E5E5E5)}
+.mga-plat.busy .mga-conn::before{content:"";position:absolute;left:7px;top:6px;width:9px;height:9px;border-radius:50%;
+  border:1.5px solid var(--neutral-300,#D4D4D4);border-top-color:var(--primary,#5A5FF2);animation:mgaspin .7s linear infinite}
+@keyframes mgaspin{to{transform:rotate(360deg)}}
+.mga-noconn{display:flex;align-items:flex-start;gap:8px;margin-top:10px;padding:10px 12px;min-width:0;
+  border:1px solid #E1E2FB;border-radius:10px;background:#F4F4FE;
+  font:400 12.5px/18px var(--font);color:#3F3FBF;text-wrap:pretty}
+.mga-noconn[hidden]{display:none}
+.mga-noconn .ph{flex:none;font-size:15px;line-height:18px;color:var(--primary,#5A5FF2)}
+
+/* ---- segmented ---- */
+.mga-seg{display:inline-flex;padding:3px;gap:3px;background:var(--neutral-100,#F5F5F5);
+  border-radius:10px;max-width:100%;overflow:hidden}
+.mga-seg button{appearance:none;border:0;background:transparent;min-width:0;padding:0 14px;height:32px;
+  border-radius:8px;font:600 13px/1 var(--font);color:#5A5FF2;cursor:pointer;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;transition:background .14s ease,box-shadow .14s ease}
+.mga-seg button:hover{background:rgba(255,255,255,.6)}
+.mga-seg button.on{background:var(--white,#fff);box-shadow:0 1px 2px rgba(10,10,10,.08)}
+.mga-seg button:active{transform:scale(.98)}
+
+/* ---- date + time fields ---- */
+.mga-when{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.mga-in{height:36px;min-width:0;padding:0 10px;border:1px solid var(--neutral-200,#E5E5E5);border-radius:8px;
+  background:var(--white,#fff);font:500 13px/1 var(--font);color:var(--neutral-900,#0A0A0A);
+  box-shadow:0 1px 2px rgba(10,10,10,.04)}
+.mga-in:focus{outline:none;border-color:#5A5FF2;box-shadow:0 0 0 3px rgba(90,95,242,.16)}
+.mga-in--date{width:150px}
+.mga-in--time{width:118px}
+.mga-tz{font:400 12px/16px var(--font);color:var(--neutral-500,#737373)}
+
+/* ---- per-asset / per-platform rows ---- */
+.mga-rows{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.mga-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:10px;
+  padding:8px 10px;border:1px solid var(--neutral-200,#E5E5E5);border-radius:10px;background:var(--white,#fff)}
+.mga-row > *{min-width:0}
+.mga-rowth{width:34px;height:34px;border-radius:8px;overflow:hidden;position:relative;flex:none;
+  background:var(--neutral-100,#F5F5F5);display:flex;align-items:center;justify-content:center;
+  color:var(--neutral-500,#737373)}
+.mga-rowth .ph{font-size:15px}
+.mga-rowth .msafcard-photo{position:absolute;top:0;left:0;transform-origin:0 0;pointer-events:none}
+.mga-rowtx{min-width:0;overflow:hidden;display:flex;flex-direction:column;gap:1px}
+.mga-rowtx b{font:600 13px/17px var(--font);color:var(--neutral-900,#0A0A0A);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mga-rowtx i{font-style:normal;font:400 11.5px/15px var(--font);color:var(--neutral-500,#737373);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mga-rowin{display:flex;align-items:center;gap:6px;flex:none}
+
+/* ---- radio list (download / send options) ---- */
+.mga-opts{display:flex;flex-direction:column;gap:8px}
+.mga-opt{display:grid;grid-template-columns:18px minmax(0,1fr);align-items:start;gap:10px;
+  padding:11px 12px;border:1px solid var(--neutral-200,#E5E5E5);border-radius:10px;background:var(--white,#fff);
+  cursor:pointer;text-align:left;transition:border-color .14s ease,background .14s ease}
+.mga-opt:hover{border-color:var(--neutral-300,#D4D4D4);background:var(--neutral-50,#FAFAFA)}
+.mga-opt.on{border-color:#5A5FF2;background:rgba(90,95,242,.05)}
+.mga-opt > *{min-width:0}
+.mga-opt .dot{width:16px;height:16px;margin-top:1px;border-radius:50%;border:1px solid var(--neutral-300,#D4D4D4);
+  background:var(--white,#fff);flex:none;position:relative}
+.mga-opt.on .dot{border-color:#5A5FF2;border-width:5px}
+.mga-opttx{min-width:0;overflow:hidden;display:flex;flex-direction:column;gap:2px}
+.mga-opttx b{font:600 13px/17px var(--font);color:var(--neutral-900,#0A0A0A)}
+.mga-opttx i{font-style:normal;font:400 12px/16px var(--font);color:var(--neutral-500,#737373);text-wrap:pretty}
+.mga-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.mga-chip{appearance:none;height:30px;padding:0 11px;border:1px solid var(--neutral-200,#E5E5E5);
+  border-radius:8px;background:var(--white,#fff);color:#5A5FF2;font:600 12.5px/1 var(--font);cursor:pointer}
+.mga-chip:hover{background:var(--neutral-50,#FAFAFA)}
+.mga-chip.on{border-color:#5A5FF2;background:rgba(90,95,242,.07)}
+.mga-note{width:100%;min-height:72px;margin-top:12px;padding:10px 12px;resize:vertical;
+  border:1px solid var(--neutral-200,#E5E5E5);border-radius:8px;background:var(--white,#fff);
+  font:400 13px/18px var(--font);color:var(--neutral-900,#0A0A0A)}
+.mga-note:focus{outline:none;border-color:#5A5FF2;box-shadow:0 0 0 3px rgba(90,95,242,.16)}
+
+/* ---- footer buttons ---- */
+.mga-btn{appearance:none;display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;
+  border-radius:10px;border:1px solid transparent;font:600 13.5px/1 var(--font);cursor:pointer;flex:none}
+.mga-btn--ghost{border-color:var(--neutral-200,#E5E5E5);background:var(--white,#fff);color:#5A5FF2;
+  box-shadow:0 1px 2px rgba(10,10,10,.04)}
+.mga-btn--ghost:hover{background:var(--neutral-50,#FAFAFA);border-color:var(--neutral-300,#D4D4D4)}
+.mga-btn--pri{background:#5A5FF2;color:#fff}
+.mga-btn--pri:hover{background:#5155da}
+.mga-btn:active{transform:scale(.98)}
+.mga-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.mga-btn .ph{font-size:15px}
+
+/* ---- done state ---- */
+.mga-done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:34px 24px 30px}
+.mga-doneico{width:44px;height:44px;border-radius:50%;background:rgba(109,165,68,.12);color:#6DA544;
+  display:inline-flex;align-items:center;justify-content:center}
+.mga-doneico .ph{font-size:22px}
+.mga-done h3{margin:2px 0 0;font:600 16px/21px var(--font);color:var(--neutral-900,#0A0A0A)}
+.mga-done p{margin:0;max-width:44ch;font:400 13px/19px var(--font);color:var(--neutral-500,#737373);text-wrap:pretty}
+
+/* ---- Mel suggestion chip (canonical spec — CLAUDE.md) ---- */
+.mga .melsugchip{display:inline-flex;align-items:center;gap:8px;min-height:34px;max-width:100%;min-width:0;
+  padding:6px 14px 6px 11px;margin-top:12px;
+  border:1px solid #E4E4FB;border-radius:12px;
+  background:linear-gradient(100deg,#F7F7FE 0%,#FCFAFD 48%,#FFFBF8 100%);
+  font:500 13px/17px var(--font);text-align:left;cursor:pointer}
+.mga .melsugchip .msp{flex:0 0 auto;width:14px;height:14px;color:#6D6EF3}
+.mga .melsugchip .mlab{background:var(--mel-gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mga .melsugchip:hover{border-color:#C9CAF8;box-shadow:0 2px 12px rgba(90,95,242,.16)}
+.mga .melsugchip:active{transform:scale(.98)}
+
+/* ---- "saved edit" badge on a card the agent edited and came back from ---- */
+.msafcard--tpl.is-edited .msafcard-photo::after{content:"Saved edit";position:absolute;left:8px;bottom:8px;
+  z-index:3;padding:3px 8px;border-radius:6px;background:rgba(90,95,242,.94);color:#fff;
+  font:600 10.5px/14px var(--font);letter-spacing:.01em;box-shadow:0 1px 3px rgba(10,10,10,.2)}
+
+@media (max-width:760px){
+  .mga-plats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mga-row{grid-template-columns:34px minmax(0,1fr)}
+  .mga-rowin{grid-column:1 / -1}
+}

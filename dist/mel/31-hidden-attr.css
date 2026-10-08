@@ -1,0 +1,23 @@
+/* ============ 31 — make the `hidden` attribute actually hide ============
+   `[hidden]{display:none}` lives in the UA stylesheet, and ANY author `display:` rule
+   beats it regardless of specificity. Two elements in this page have such a rule and so
+   render despite carrying `hidden`:
+
+     .msafcard--up   ("Crestview brand kit", the uploaded-template card)
+                     — .msafcard{display:flex} in 19-ms-newflow-css.css:447 wins.
+                     It showed a "you already uploaded a brand kit" card to users who
+                     have uploaded nothing. Invisible-ish at 80 cards, obvious at 12.
+     .msaf-tabcnt    (count badge on the "More" format tab)
+                     — .msaf-tab .msaf-tabcnt{display:inline-flex} wins, leaving an
+                     empty badge on the tab.
+
+   Restoring the attribute's meaning is the fix, not a workaround: `el.hidden = true/false`
+   is the toggle this codebase already uses everywhere — 27-ms-fav-js.js:103 reveals the
+   upload card with `up.hidden = false`, and 20-ms-newflow-js.js drives the More popover
+   and its badge the same way. Those toggles were silently no-ops for these two elements.
+
+   Checked for anything relying on the leaky behaviour: the template grid filters with a
+   `.hide` class (20-ms-newflow-js.js:269), not `hidden`, so it is unaffected. The other
+   17 `[hidden]` elements already computed to display:none, so this changes nothing for
+   them. */
+[hidden]{display:none !important}

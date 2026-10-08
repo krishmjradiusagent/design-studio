@@ -1,0 +1,13 @@
+/* ============ 30 — child-component mount boundaries ============
+   "Mel Copilot" is split into child Design Components so an edit re-renders only the
+   region it touches instead of all ~5,000 nodes. Each child renders inside a wrapper
+   div (.sc-host) that the runtime owns, and that wrapper would otherwise become a
+   layout box in the middle of an existing flex column — e.g. between .msnf and its
+   .msnfs screens.
+
+   display:contents removes the wrapper's box while leaving its children in place, so
+   the layout is byte-identical to the un-split version. Verified safe here because no
+   rule in mel/* uses a direct-child combinator across this boundary (checked
+   .msnf > .msnfs and friends), and the :nth-child rules on the cards all live inside
+   the moved subtree, where their sibling order is unchanged. */
+.sc-host[data-sc-name="Mel Studio Templates"]{display:contents}

@@ -1,0 +1,43 @@
+/* Flyer asset inside the package editor: print-size picker above the canvas + Print in the floating bar. */
+.pkedit #pke-psize,.pkedit #pke-print,.pkedit #pke-printsep{display:none}
+.pkedit.pk-isflyer #pke-psize{display:flex}
+.pkedit.pk-isflyer #pke-print{display:inline-flex}
+.pkedit.pk-isflyer #pke-printsep{display:block}
+.pkedit #pke-psize{position:absolute;top:14px;left:472px;right:16px;z-index:6;align-items:center;gap:10px;height:48px;padding:0 10px 0 14px;background:var(--white);border:1px solid var(--neutral-200);border-radius:12px;box-shadow:0 1px 2px rgba(10,10,10,.05);min-width:0}
+.pkedit.side-collapsed #pke-psize{left:76px}
+.pkedit #pke-psize .pl{font:600 13px var(--font);color:var(--neutral-900);white-space:nowrap}
+.pkedit #pke-psize .po{display:flex;gap:6px;min-width:0;overflow-x:auto;flex:1}
+.pkedit #pke-psize button{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 11px;border:1px solid var(--neutral-200);border-radius:10px;background:var(--white);font:500 12.5px var(--font);color:var(--neutral-700);cursor:pointer;white-space:nowrap;flex:none}
+.pkedit #pke-psize button:hover{background:var(--neutral-50)}
+.pkedit #pke-psize button.on{border-color:#5A5FF2;background:#EEEFFE;color:#5A5FF2}
+.pkedit #pke-psize button i{display:block;border:1.5px solid currentColor;border-radius:2px;opacity:.7}
+.pkedit #pke-psize button small{font:400 11px var(--font);color:var(--neutral-500)}
+.pkedit #pke-psize button.on small{color:#5A5FF2}
+.pkedit .pkacts #pke-print{align-items:center;gap:7px;color:var(--primary)}
+.pkedit .pkacts #pke-print svg{width:15px;height:15px;color:var(--primary)}
+.pkedit .pkacts #pke-print .lb{font:600 13px var(--font);color:var(--primary)}
+.pkedit .pkacts #pke-print:hover{background:var(--neutral-100)}
+/* canvas follows the chosen sheet */
+.pkedit .pkast[data-pk="flyer"] .pv[data-pv="flyer"]{aspect-ratio:var(--pk-r,9/16);max-width:var(--pk-w,300px);width:100%;margin:0 auto;align-self:center}
+.pkedit .pkast[data-pk="flyer"] .pv[data-pv="flyer"] .real,.pkedit .pkast[data-pk="flyer"] .pv[data-pv="flyer"] .real .msflyer{max-width:none;width:100%;height:100%;aspect-ratio:var(--pk-r,9/16)}
+.pkedit .pkast[data-pk="flyer"] .pv[data-pv="flyer"] .real .msflyer{overflow:hidden}
+.pkedit.pk-bleed .pkast[data-pk="flyer"] .pv[data-pv="flyer"]{outline:1px dashed #DC2626;outline-offset:-6px}
+/* print dialog */
+.pkp-w{position:absolute;inset:0;z-index:960;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.5)}
+.pkp-w.open{display:flex}
+.pkp{width:460px;max-width:calc(100% - 32px);background:var(--white);border-radius:14px;box-shadow:var(--shadow-lg);font-family:var(--font);color:var(--neutral-900)}
+.pkp h3{margin:0;font:600 18px var(--font)}
+.pkp .hd{padding:18px 20px 4px}.pkp .hd p{margin:2px 0 0;font:400 13px var(--font);color:var(--neutral-500)}
+.pkp .bd{padding:8px 20px}
+.pkp .rw{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--neutral-100);font:500 13px var(--font)}
+.pkp .rw:first-child{border-top:0}
+.pkp .rw span{flex:1}.pkp .rw small{display:block;font:400 12px var(--font);color:var(--neutral-500)}
+.pkp .tg{position:relative;width:36px;height:20px;border-radius:999px;background:var(--neutral-300);border:0;cursor:pointer;padding:0;flex:none;transition:background .15s}
+.pkp .tg::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
+.pkp .tg.on{background:#5A5FF2}.pkp .tg.on::after{transform:translateX(16px)}
+.pkp .ft{display:flex;align-items:center;gap:8px;padding:14px 20px 18px}
+.pkp .ft .sp{flex:1}
+.pkp .b{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:10px;border:1px solid var(--neutral-200);background:#fff;font:500 13px var(--font);color:#5A5FF2;cursor:pointer}
+.pkp .b.pri{background:#5A5FF2;border-color:#5A5FF2;color:#fff}
+.pkp .prog{height:6px;border-radius:999px;background:var(--neutral-100);overflow:hidden;margin:18px 0}
+.pkp .prog i{display:block;height:100%;width:0;background:#5A5FF2;transition:width .25s}

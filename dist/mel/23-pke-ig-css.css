@@ -1,0 +1,46 @@
+.pkeigmodal{position:fixed;inset:0;z-index:1000;display:none;place-items:center;font-family:var(--font)}
+.pkeigmodal.open{display:grid}
+.pkeigscrim{position:absolute;inset:0;background:rgba(10,10,10,.5);cursor:pointer;animation:pkeigfade .18s ease}
+.pkeigbox{position:relative;background:var(--white);border-radius:14px;box-shadow:0 20px 60px rgba(10,10,10,.35);width:420px;max-width:calc(100vw - 32px);overflow:hidden;animation:pkeigin .22s cubic-bezier(.23,1,.32,1)}
+@keyframes pkeigfade{from{opacity:0}to{opacity:1}}
+@keyframes pkeigin{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+.pkeigbox .x{position:absolute;top:12px;right:12px;width:28px;height:28px;border:none;background:none;border-radius:8px;cursor:pointer;color:var(--neutral-500);display:grid;place-items:center;transition:background .12s,color .12s;z-index:2}
+.pkeigbox .x:hover{background:var(--neutral-100);color:var(--neutral-900)}
+.pkeigbox .x svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.pkeigbox .hero{padding:34px 24px 4px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.pkeigbox .glyph{width:72px;height:72px;border-radius:18px;display:grid;place-items:center;margin-bottom:16px;position:relative;background:#F5F5F5}
+.pkeigbox .glyph.ig{background:linear-gradient(45deg,#FEDA75 0%,#FA7E1E 20%,#D62976 45%,#962FBF 70%,#4F5BD5 100%)}
+.pkeigbox .glyph.ig svg{width:36px;height:36px;color:#fff}
+.pkeigbox .glyph.spin{background:#F0F0FF}
+.pkeigbox .glyph.spin::before{content:"";position:absolute;inset:12px;border-radius:50%;border:3px solid rgba(90,95,242,.18);border-top-color:var(--primary);animation:pkeigsp .85s linear infinite}
+@keyframes pkeigsp{to{transform:rotate(360deg)}}
+.pkeigbox .glyph.ok{background:#E9F7EF}
+.pkeigbox .glyph.ok svg{width:34px;height:34px;color:#16a34a;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.pkeigbox .glyph.err{background:#FDECEC}
+.pkeigbox .glyph.err svg{width:32px;height:32px;color:#dc2626;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.pkeigbox h3{margin:0 0 6px;font:600 17px var(--font);color:var(--neutral-900);letter-spacing:-.01em}
+.pkeigbox .sub{margin:0;font:400 13px/1.5 var(--font);color:var(--neutral-500);max-width:320px;text-wrap:pretty}
+.pkeigbox .meta{margin-top:14px;display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--neutral-100);font:600 11px var(--font);color:var(--neutral-600);letter-spacing:.02em}
+.pkeigbox .meta .adot{width:6px;height:6px;border-radius:50%;background:var(--neutral-400)}
+.pkeigbox .meta.ok{background:#E9F7EF;color:#0e7a3a}
+.pkeigbox .meta.ok .adot{background:#16a34a}
+.pkeigbox .meta.err{background:#FDECEC;color:#b3261e}
+.pkeigbox .meta.err .adot{background:#dc2626}
+.pkeigbox .meta.busy{background:color-mix(in srgb,var(--primary) 10%,white);color:var(--primary)}
+.pkeigbox .meta.busy .adot{background:var(--primary);animation:pkeigblink 1s ease-in-out infinite}
+@keyframes pkeigblink{0%,100%{opacity:1}50%{opacity:.35}}
+.pkeigbox .ft{padding:22px 24px 22px;display:flex;justify-content:center;gap:8px}
+.pkeigbox .ft button{height:38px;padding:0 18px;font:600 13px var(--font);border-radius:8px;cursor:pointer;transition:background .12s,filter .12s,transform .12s;border:1px solid transparent}
+.pkeigbox .ft .pri{background:var(--primary);color:#fff}
+.pkeigbox .ft .pri:hover{filter:brightness(1.06)}
+.pkeigbox .ft .pri:active{transform:scale(.98)}
+.pkeigbox .ft .gh{background:var(--white);border-color:var(--neutral-200);color:var(--neutral-700)}
+.pkeigbox .ft .gh:hover{background:var(--neutral-50)}
+.pkeigbox .state{display:none}
+.pkeigmodal[data-state="idle"] .state.idle,
+.pkeigmodal[data-state="connecting"] .state.connecting,
+.pkeigmodal[data-state="failed"] .state.failed,
+.pkeigmodal[data-state="connected"] .state.connected,
+.pkeigmodal[data-state="posting"] .state.posting,
+.pkeigmodal[data-state="done"] .state.done{display:contents}
+

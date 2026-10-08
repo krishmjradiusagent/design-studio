@@ -1,0 +1,37 @@
+/* ============ 29 — render-cost containment (perf only, no visual change) ============
+   Measured on the live page: 5,015 nodes / 464 inline SVGs, of which the 80 template
+   cards were 2,294 nodes + 165 SVGs — 46% of the document — all laid out and painted
+   at once the moment the templates screen opens.
+
+   content-visibility:auto makes the browser skip layout, paint and hit-testing for the
+   cards that are off-screen and do that work as they scroll in. contain-intrinsic-size
+   gives each one a placeholder box so the scrollbar and scroll position stay honest;
+   `auto <len>` means "remember the real measured size, use the fallback until then".
+
+   SCOPE IS DELIBERATELY ONE SELECTOR. content-visibility implies `contain:paint`, which
+   CLIPS anything overflowing the element's box. .msafcard is safe because
+   19-ms-newflow-css.css:447 already sets overflow:hidden on it, so nothing there was
+   ever painting outside. Four other regions were tried and reverted:
+
+     .mhscroll .hrow    — holds .hmenu, the Rename/Pin/Delete popover, inside a ~58px
+                          row. It must overflow, so containment clipped it.
+     #pk-edit .pkast    — 16-ms-packet-css.css:442 sets `.pkast.done .pv{overflow:visible}`,
+                          i.e. that tile paints outside its box on purpose.
+     #ms-library .mslcr — a 14px-padded flex row; ~40 nodes. Not worth any clipping risk.
+     contain:layout on the scrollers — `contain:layout` makes an element a containing
+                          block for position:fixed descendants, which would re-anchor
+                          popovers like .pkeshpop / .pkeschedmodal to the scroller
+                          instead of the viewport.
+
+   Before adding a region here, check its subtree for a popover, menu, tooltip or
+   position:fixed child. If it has one, the answer is no. */
+
+.msafcard{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 300px;
+}
+
+@media print{
+  /* containment must never hide a card from a print/PDF pass */
+  .msafcard{content-visibility:visible}
+}

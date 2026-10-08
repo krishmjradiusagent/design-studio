@@ -1,0 +1,11 @@
+/* ---------- mel/42 — "Mel suggests" on the template name.
+   Replaces the old "Mel picked" pill over the render, and it is ONE card per
+   format tab, not every card: Mel picks the single template she'd use for this
+   share. Every card carries the literal label in markup; mel/43 flips the
+   .melsug-on class onto the pick for the active format, so nothing here
+   generates text and the card geometry never changes. ---------- */
+.msafcard-titlecol .msafcard-addr{display:flex;align-items:baseline;gap:8px;min-width:0}
+.msafcard-melsug{display:none;flex:none;font:600 11.5px/16px var(--font,var(--font-sans));
+  background:linear-gradient(100deg,#B45309 0%,#EA580C 48%,#FFDA44 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.msafcard--tpl.melsug-on .msafcard-melsug{display:inline}
