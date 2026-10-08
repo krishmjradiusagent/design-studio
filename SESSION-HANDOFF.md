@@ -7,4 +7,4 @@
 - Validation: bundled manifest, resources, page-order, and template JSON parse; the embedded home and printer-panel JavaScript pass `node --check`; all five artwork dependencies exist. Standalone SHA-256: `6ad28afe61b0a9139cc883deca73a082feeec7d930aac66d0bca759ea9fc98ba`.
 - The canonical `DesignStudioCard.js`, `design-studio-cards.css`, and `DesignStudioCard.md` additions remain local-only in the separate Radius UI Design System repository; that repository was not pushed.
 - No browser/visual audit was performed. Final visual approval remains pending. GPT Site remains at v4 (`https://mel-copilot-design-studio.radiusagent-2682.chatgpt.site`); no Site deployment was requested this session.
-- GitHub publication: pending session-close push; record the resulting commit here.
+- GitHub publication: commit `a40fe0e42550599cb3efd4308f253fd8e2a03428` pushed to `main`. The publicly served standalone hash matches the local SHA-256 above.
