@@ -69,6 +69,45 @@
     box.appendChild(clone);
     return box;
   }
+  function closePickedMenu(menu, focusTrigger){
+    if(!menu) return;
+    menu.hidden = true;
+    menu.style.display = 'none';
+    const trigger = menu.parentElement && menu.parentElement.querySelector('.msaf-selthumb-trigger');
+    if(trigger){
+      trigger.setAttribute('aria-expanded', 'false');
+      if(focusTrigger) trigger.focus();
+    }
+  }
+  document.addEventListener('click', e => {
+    document.querySelectorAll('.msaf-selthumb-menu:not([hidden])').forEach(menu => {
+      if(!menu.parentElement.contains(e.target)) closePickedMenu(menu, false);
+    });
+  });
+  document.addEventListener('keydown', e => {
+    const root = e.target.closest && e.target.closest('.msaf-selthumbs');
+    const menu = root && root.querySelector('.msaf-selthumb-menu');
+    if(!menu || menu.hidden) return;
+    if(e.key === 'Escape'){
+      e.preventDefault();
+      closePickedMenu(menu, true);
+      return;
+    }
+    if(e.key === 'Tab'){
+      setTimeout(() => closePickedMenu(menu, false), 0);
+      return;
+    }
+    if(!['ArrowDown','ArrowUp','Home','End'].includes(e.key)) return;
+    const items = [...menu.querySelectorAll('[role="menuitem"]')];
+    if(!items.length) return;
+    e.preventDefault();
+    const current = items.indexOf(document.activeElement);
+    const next = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1
+      : current < 0 ? (e.key === 'ArrowDown' ? 0 : items.length - 1)
+      : (current + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+    items.forEach((item, i) => { item.tabIndex = i === next ? 0 : -1; });
+    items[next].focus();
+  });
   const BAR = {
     paint(){
       const wrap = document.querySelector('.msaf-actionbar');
@@ -80,14 +119,60 @@
       if(prev) prev.disabled = cards.length === 0;
       if(!thumbs) return;
       thumbs.textContent = '';
+      if(!cards.length) return;
+      thumbs.style.position = 'relative';
       const ref = refPhotoSize();
-      cards.slice(0, 4).forEach(c => thumbs.appendChild(thumbOf(c, ref)));
-      if(cards.length > 4){
-        const more = document.createElement('span');
-        more.className = 'msaf-selmore';
-        more.textContent = '+' + (cards.length - 4);
-        thumbs.appendChild(more);
-      }
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'rds-btn rds-btn--ghost rds-btn--icon rds-btn--sm msaf-selthumb-trigger';
+      trigger.setAttribute('aria-label', 'Show selected templates');
+      trigger.setAttribute('aria-haspopup', 'menu');
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.setAttribute('aria-controls', 'msaf-selected-templates-menu');
+      trigger.innerHTML = '<i class="ph ph-caret-down" aria-hidden="true" style="font-size:16px"></i>';
+      const menu = document.createElement('div');
+      menu.className = 'rds-menu msaf-selthumb-menu';
+      menu.id = 'msaf-selected-templates-menu';
+      menu.setAttribute('role', 'menu');
+      menu.setAttribute('aria-label', 'Selected templates');
+      menu.hidden = true;
+      menu.style.cssText = 'position:absolute;bottom:calc(100% + var(--space-1-5));left:0;z-index:60;width:max-content;display:none';
+      cards.forEach(card => {
+        const item = document.createElement('div');
+        item.className = 'rds-menu__item';
+        item.setAttribute('role', 'menuitem');
+        item.tabIndex = -1;
+        item.style.whiteSpace = 'nowrap';
+        const name = document.createElement('span');
+        name.textContent = ((card.querySelector('.msafcard-addr') || {}).textContent || card.dataset.nftpl || 'Template').trim();
+        name.style.whiteSpace = 'nowrap';
+        item.append(thumbOf(card, ref), name);
+        menu.appendChild(item);
+      });
+      trigger.addEventListener('click', e => {
+        e.stopPropagation();
+        const open = menu.hidden;
+        menu.hidden = !open;
+        menu.style.display = open ? 'block' : 'none';
+        trigger.setAttribute('aria-expanded', String(open));
+        if(open && e.detail === 0){
+          const first = menu.querySelector('[role="menuitem"]');
+          if(first){ first.tabIndex = 0; first.focus(); }
+        }
+      });
+      trigger.addEventListener('keydown', e => {
+        if(e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        e.preventDefault();
+        menu.hidden = false;
+        menu.style.display = 'block';
+        trigger.setAttribute('aria-expanded', 'true');
+        const items = [...menu.querySelectorAll('[role="menuitem"]')];
+        if(!items.length) return;
+        const next = e.key === 'ArrowDown' ? 0 : items.length - 1;
+        items.forEach((item, i) => { item.tabIndex = i === next ? 0 : -1; });
+        items[next].focus();
+      });
+      thumbs.append(trigger, menu);
     }
   };
   window.MELTPLBAR = BAR;
