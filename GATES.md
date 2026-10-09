@@ -1,23 +1,22 @@
-# Gates: MEL Copilot GPT Site publication
+# Gates: Design Studio home preview
 
-OWNS: .openai/**, dist/**, GATES.md
+OWNS: GATES.md, Backups/home-scaling-preview.html, Backups/home-studio-patch.js
 
-Scope: Publish the standalone MEL Copilot HTML as a new ChatGPT Site without modifying the standalone source.
+Scope: Preserve hero geometry and build the approved Radius card compositions in a review preview. Shared component sources are DesignStudioCard.js, design-studio-cards.css, and DesignStudioCard.md in the Radius UI Design System.
 
-- [x] G1: packaged Site HTML matches the standalone source byte-for-byte
-  CHECK: shasum -a 256 "Mel Copilot (standalone).html" dist/index.html
-  EXPECT: 52d1ec6227d9157477e33eaf2c4cfb0840ae5a823acc0cb77aa37b8f285d359f
-  EVIDENCE: exit=0; shell=/bin/sh; cwd=/Users/radius/Desktop/Architect/Radius/Design studio; path=6166d1a0b07c/41 entries; output=52d1ec6227d9157477e33eaf2c4cfb0840ae5a823acc0cb77aa37b8f285d359f  Mel Copilot (standalone).html | 52d1ec6227d9157477e33eaf2c4cfb0840ae5a823acc0cb77aa37b8f285d359f  dist/index.html
+- [x] G1: Compare published and local hero dimensions.
+  EVIDENCE: Browser DOM measurements: both hero cards 431 by 425.5 CSS pixels, 14px gap, top 174.875px. Screenshots inspected before changes.
+- [x] G2: Preserve all standalone source preceding the home patch.
+  EVIDENCE: The approved full preview was copied into the standalone; the only path rewrite was ../assets/template-previews/ to assets/template-previews/. The unrelated dist/index.html remains unchanged.
+- [x] G3: All five banner controls reach matching template format.
+  EVIDENCE: Browser clicks confirmed Post, Emailer, Flyers, Story, Reel selected; each returned home through Design studio.
+- [x] G4: Render all requested sections in the preview.
+  EVIDENCE: Current browser accessibility tree includes Create with templates, Continue designing, Templates for you, Browse template categories, Frequently used.
+- [ ] G5: User visually approves preview before standalone update.
+  EVIDENCE: User authorized applying the preview for session close and requested no visual audit. Final visual approval remains pending.
 
-- [x] G2: Sites manifest points to the created project and serves dist
-  CHECK: node -e "const fs=require('fs');const cfg=JSON.parse(fs.readFileSync('.openai/hosting.json','utf8'));if(cfg.project_id!=='appgprj_6ac73b2b5b2c8191b37d6319e1df677c')process.exit(1);if(!cfg.static||cfg.static.directory!=='dist')process.exit(1);console.log('hosting config verified')"
-  EXPECT: hosting config verified
-  EVIDENCE: exit=0; shell=/bin/sh; cwd=/Users/radius/Desktop/Architect/Radius/Design studio; path=6166d1a0b07c/41 entries; output=hosting config verified
+- [ ] G6: Preview thumbnails preserve complete source artwork and proportional scaling.
+  EVIDENCE: GPT-6 Sol high requested subagent replaced HTML clones with five supplied PNGs. Original/copy/embedded-byte checks and JS syntax passed. Main source review confirmed approved headings and pre-patch standalone source preserved. User visual verification remains pending; no visual correctness claim.
 
-- [x] G3: required static dependency folders are packaged with the Site
-  CHECK: test -f dist/mel/50-flyer-studio.js && test -f dist/mel/55-ms-sidebar.css && test -f dist/assets/mel-icon.svg && test -f dist/assets/tpl/package-collage.jpg && test -f dist/website-builder.js && echo site assets verified
-  EXPECT: site assets verified
-  EVIDENCE: exit=0; shell=/bin/sh; cwd=/Users/radius/Desktop/Architect/Radius/Design studio; path=6166d1a0b07c/41 entries; output=site assets verified
-
-- [x] G4: production deployment reports succeeded
-  EVIDENCE: Sites deployment appgdep_6ac73cb1b40081918530050f7cb2bbd3 returned status=succeeded for version appgprj_6ac73b2b5b2c8191b37d6319e1df677c~appgver_ede9c91c76a08191b0ddc7d38fab40cb at https://mel-copilot-design-studio.radiusagent-2682.chatgpt.site
+- [x] G7: Preserve the package-flow rollback and make standalone-relative artwork resolve.
+  EVIDENCE: The home and printer patches parse as JavaScript; all bundled JSON parses. No package-flow runtime markers are present. All five fallback PNGs exist under assets/template-previews/.
